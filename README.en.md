@@ -1,12 +1,12 @@
-# 🔥 Kuaishou Data Collector - GUI, Ready to Use, Free Trial Available
+# 🔥 Kuaishou Data Collector - GUI Software
 
 [![Download Latest Version](https://img.shields.io/badge/Download-Latest_Release-brightgreen)](https://github.com/mashukui/kuaishou_one_spider/releases/)
 
-[简体中文](README.md) | **English**
+[简体中文 README](README.md) | [English README](README.en.md)
 
 ---
 
-Hi, I'm [@Mage Python Talk](https://github.com/mashukui), a 10+ year software engineer, now working full-time as an independent developer.
+Hi, I'm [@马哥python说](https://github.com/mashukui), a 10+ year software engineer, now working full-time as an independent developer.
 
 Kuaishou is one of China's leading short-video social platforms, known for its unique inclusive traffic distribution mechanism and vast creator ecosystem, covering users from first-tier cities to lower-tier markets. Whether it's trend tracking, content analysis, or audience insights, Kuaishou holds rich data value.
 
@@ -259,7 +259,7 @@ Watch the full workflow here: [【Tool Demo】Kuaishou One Spider](https://mp.we
 >
 > Or download directly from: [GitHub Releases](https://github.com/mashukui/kuaishou_one_spider/releases/)
 
-![QR Code](https://private-user-images.githubusercontent.com/228842838/590187614-5723e3c6-6c6f-4fc0-8adf-320e72d8c05b.png)
+<img width="1938" height="364" alt="二维码-公众号放底部v2" src="https://github.com/user-attachments/assets/58399737-5e17-4d61-b0fc-aa6f312dec83" />
 
 ---
 
