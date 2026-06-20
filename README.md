@@ -181,7 +181,7 @@ def get_logger(self):
 3. 点击「开始执行」，实时查看采集进度
 4. 采集完成，在当前文件夹查看 csv 数据文件或已下载的视频
 ## 3.4 演示视频
-软件完整使用流程请参考演示视频：[【工具演示】爬快手聚合软件](https://mp.weixin.qq.com/s/bqP01MKMjP9oazzW0gkh0Q)
+软件完整使用流程请参考演示视频：[【工具演示】爬快手聚合软件](https://www.bilibili.com/video/BV1psRfBkEot/)
 
 # 四、付费说明
 ## 4.1 卡密说明
@@ -208,4 +208,5 @@ https://mgnb.pro/product/kuaishou
 
 # 五、软件获取
 公众号"**老男孩的平凡之路**"，后台回复"**爬快手聚合软件**"获取最新版软件安装包。[或点这里直达下载](https://github.com/mashukui/kuaishou_one_spider/releases/)
-<img width="1938" height="364" alt="二维码-公众号放底部v2" src="https://github.com/user-attachments/assets/5723e3c6-6c6f-4fc0-8adf-320e72d8c05b" />
+<img width="1406" height="266" alt="二维码-公众号放底部v3" src="https://github.com/user-attachments/assets/0a2ce639-01ee-4061-a7a4-110b72bdd0ed" />
+
