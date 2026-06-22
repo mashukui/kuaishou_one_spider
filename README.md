@@ -1,212 +1,261 @@
 # kuaishou_one_spider
-> 🔥快手数据采集器 - GUI界面开箱即用，提供日卡试用
+
+> 🔥 快手数据采集工具 / Kuaishou crawler GUI，支持关键词作品采集、评论采集、作品详情采集、主页作品采集、视频下载、CSV 导出和链接转换。
 >
-> 🔧支持功能：✅关键词搜索作品 ✅评论筛选采集 ✅主页作品采集 ✅uid链接转换
+> 💡 支持 Windows/macOS，无需配置Python环境；仓库用于软件介绍、版本发布、使用说明和问题反馈，完整源码暂不公开。
 >
-> [👉🏻点这里下载最新版](https://github.com/mashukui/kuaishou_one_spider/releases/)
+> [⬇️下载最新版](https://github.com/mashukui/kuaishou_one_spider/releases/) | [🎬使用演示](https://www.bilibili.com/video/BV1psRfBkEot/) | [💳开通使用](https://mgnb.pro/product/kuaishou)
 
 <p align="center">
-<a href="README.md">简体中文 README</a> | <a href="README.en.md">English README</a>
+  <a href="README.md">简体中文 README</a> | <a href="README.en.md">English README</a>
 </p>
 
-# 一、开发背景与效果展示
-## 1.1 开发初衷
-我是[@马哥python说](https://github.com/mashukui)，一枚10年+程序猿，现全职独立开发。
+## 👋 软件简介
 
-快手作为国内头部短视频社交平台，凭借其独特的普惠流量分发机制和庞大的创作者生态，覆盖了从一二线到下沉市场的海量用户群体。无论是热点追踪、内容分析还是用户洞察，快手都蕴含着丰富的数据价值。
+`kuaishou_one_spider` 是一款面向快手数据采集场景的桌面GUI工具，整合了关键词作品采集、评论采集、作品详情采集、主页作品采集、链接转换等常用能力。用户无需配置 Python 环境，下载客户端后登录即可使用。
 
-针对快手平台数据的独特性，我用python独立开发了一款工具“**爬快手聚合软件**”。这款软件将评论采集、达人主页作品采集、链接转换三大功能集于一身，打造一站式的快手数据采集方案。
+它适合以下场景：
 
-## 1.2 适用场景
-软件适用于以下场景：
-- **获客截流**：通过目标行业、品牌热门作品下的评论区，精准定位潜在用户；
-- **舆情分析**：采集快手话题数据，用于社媒舆情监控、品牌口碑研究等；
-- **内容参考**：分析热门作品的内容风格与爆款话题，为创作方向提供数据支撑；
-- **运营协作**：处理不同格式的链接/uid互转，方便跨工具、跨平台的数据流转。
+| 场景 | 说明 |
+| --- | --- |
+| ✅ 获客截流 | 从行业、品牌、竞品相关作品评论区采集潜在用户线索 |
+| ✅ 舆情分析 | 采集关键词相关作品与评论，用于热点事件、传播趋势和口碑分析 |
+| ✅ 内容创作 | 分析热门作品的内容风格、话题标签、互动数据和爆款方向 |
+| ✅ 快手运营 | 进行主页链接、快手号、uid、作品链接等格式转换和数据归档 |
 
-## 1.3 效果展示
-### 功能1-采集搜索作品及评论（指定关键词采集作品和评论）
-运行界面：
+## ⚙️ 功能概览
+
+| 功能 | 说明 | 输出 |
+| --- | --- | --- |
+| ✅ 关键词作品采集 | 按关键词搜索快手作品，采集作品基础数据 | CSV |
+| ✅ 评论采集 | 根据关键词搜索结果或指定作品链接采集评论 | CSV |
+| ✅ 作品详情采集 | 根据作品链接采集作品详情，并支持视频下载 | CSV、视频文件 |
+| ✅ 主页作品采集 | 根据达人主页链接采集主页作品列表，并支持视频下载 | CSV、视频文件 |
+| ✅ 链接与 uid 转换 | 支持主页链接、快手号、uid、作品链接之间的转换 | CSV |
+| ✅ 自动保存 | 每采集一页立即写入 CSV，降低中断丢数风险 | CSV |
+| ✅ 运行日志 | 自动记录运行过程，便于排查问题 | logs日志文件 |
+
+## 🚀 快速开始
+
+1. 打开 [Releases](https://github.com/mashukui/kuaishou_one_spider/releases/) 下载最新版软件。
+2. 解压后运行对应系统的客户端。
+3. 使用软件内置的《cookie小工具》完成cookie配置。
+4. 登录软件账号。
+5. 选择采集模块，填写关键词、作品链接或主页链接。
+6. 点击「开始执行」，等待采集完成。
+7. 在软件所在目录查看CSV、视频文件和日志文件。
+
+## 💻 支持系统
+
+| 系统 | 支持情况 |
+| --- | --- |
+| Windows | 支持，下载Windows客户端即可运行 |
+| macOS | 支持，下载macOS客户端即可运行 |
+
+## 🖼️ 功能展示
+
+### 关键词作品与评论采集
+
+关键词作品与评论采集界面：
+
 ![运行界面-采集搜索作品及评论](https://files.mdnice.com/user/32110/13464ab4-bbab-4f23-8de0-c54a298496f0.jpg)
 
-采集到的作品数据，包括**12个字段**：关键词,页码,视频标题,话题标签,视频链接,点赞数,观看数,视频时长_秒,发布时间,作者昵称,作者uid,作者主页链接。
+搜索作品结果：
+
 ![结果数据-搜索作品](https://files.mdnice.com/user/32110/47514426-3972-4d2b-8f44-06321074ca95.png)
- 
-采集到的评论数据，包括**10个字段**：作品id,作品链接,页码,用户昵称,用户id,用户主页,评论时间,评论点赞数,评论级别,评论内容。
+
+评论采集结果：
+
 ![结果数据-评论](https://files.mdnice.com/user/32110/3da2ce78-8520-4516-9d96-5762cd681a1b.png)
 
- 
-### 功能2-采集详情作品（指定作品链接采集作品详情）
-运行界面：
+### 作品详情采集
+
+作品详情采集界面：
+
 ![运行界面-采集作品详情](https://files.mdnice.com/user/32110/67a28f32-d288-43c2-9107-c01ebc53fbbb.jpg)
 
-采集到的作品详情，包括**18个字段**：关键词,作品id,作品链接,视频标题,话题标签,作者昵称,作者uid,作者主页链接,发布时间,视频时长_秒,点赞数,观看数,评论数,收藏数,转发数,IP属地,封面链接,视频直链。
+作品详情采集结果：
+
 ![结果数据-作品详情](https://files.mdnice.com/user/32110/7f6b8bc9-d409-4f25-aa60-ab62b74cf7df.png)
- 
-同时支持下载这些链接的视频mp4文件，方便归档，如下：
+
+自动下载的视频文件：
+
 ![视频文件-作品详情](https://files.mdnice.com/user/32110/bbdd074e-7ffa-4d2a-94ab-2133544ee26b.png)
 
- 
-### 功能3-采集主页作品（指定主页链接采集作品）
-运行界面：
+### 主页作品采集
+
+主页作品采集界面：
+
 ![运行界面-采集主页作品](https://files.mdnice.com/user/32110/f604b457-bf2a-42ae-b412-9518c2cb5d39.jpg)
 
-采集到的主页作品数据包含**12个字段**：页码,作者昵称,uid,作者链接,视频标题,视频标签,视频链接,发布时间,视频时长,点赞数,收藏数,观看数。
+主页作品采集结果：
+
 ![结果数据-主页作品](https://files.mdnice.com/user/32110/1bd49107-b206-4de2-9164-c51c9557fce6.png)
 
-同时支持下载主页中的视频mp4文件，方便归档，如下：
+自动下载的主页视频文件：
+
 ![视频文件-主页作品](https://files.mdnice.com/user/32110/815900e6-6fc0-4891-ac10-f0e5ec20b298.png)
 
-### 功能4-主页链接转快手号
-运行界面：
+### 链接与 uid 转换
+
+主页链接转快手号：
+
 ![运行界面-主页链接转ks号](https://files.mdnice.com/user/32110/4649de6f-36e0-4140-bfaa-e800117e81f3.jpg)
- 
-结果数据：
+
 ![结果数据-主页链接转ks号](https://files.mdnice.com/user/32110/1e9da0e4-1426-44ea-b377-308735ff2009.png)
- 
-### 功能5-快手号转主页链接
-运行界面：
+
+快手号转主页链接：
+
 ![运行界面-ks号转主页链接](https://files.mdnice.com/user/32110/a2b7808a-3381-4ee6-82eb-5b6dc5bd1d2a.jpg)
 
-结果数据：
 ![结果数据-ks号转主页链接](https://files.mdnice.com/user/32110/7448e10e-a262-4386-9259-4ef0bd985110.png)
- 
-### 功能6-app端作品链接转pc端作品链接
-运行界面：
+
+App 端作品链接转 PC 端作品链接：
+
 ![运行界面-app端作品链接转pc端作品链接](https://files.mdnice.com/user/32110/3ae828eb-9afc-4dd7-a107-a8b507b4b909.jpg)
- 
-结果数据：
+
 ![结果数据-app端作品链接转pc端作品链接](https://files.mdnice.com/user/32110/f8b59751-21a1-4874-9535-1e1fe126fcfa.png)
- 
-以上是6个主要功能的介绍。
 
-## 1.4 软件说明
-使用前请留意以下几点：
-```
-1. Windows / Mac 均可直接运行，无需配置编程环境
-2. 三大核心功能：① 关键词/作品链接采集评论 ② 主页链接采集作品 ③ uid与链接互转
-3. 采用接口协议采集，非模拟浏览器等RPA方案，稳定性更高
-4. 采集完成后，自动在当前文件夹生成 csv 结果文件
-5. 每采集一页即自动保存一次csv，防止异常中断导致数据丢失（每页间隔 1~2s）
-6. 运行过程记录详细日志，方便回溯排查
-```
+## 📊 输出字段
 
-# 二、核心技术
-## 2.1 模块分工
-软件全部基于 Python 开发，各模块分工如下：
-| 序号 | 模块 | 用途 |
-| :--- | :--- |:--- |
-|1| `tkinter` | 构建gui图形界面 |
-|2| `requests` | 发送网络爬虫请求 |
-|3| `json` | 解析接口返回的响应数据 |
-|4| `pandas` | 清洗并保存csv数据结果 |
-|5| `logging` | 记录运行日志 |
+软件会根据不同采集模块生成对应的 CSV 文件。字段较多，下面先按数据类型展示主要字段范围；需要完整字段时，可展开查看。
 
-## 2.2 代码片段示例
-发送请求并解析数据：
-```python
-# 发送请求
-r = requests.get(url, headers=h1, params=params)
-# 解析数据
-json_data = r.json()
-```
-遍历评论内容字段：
-```python
-for data in json_data['rootCommentsV2']:
-    # 评论内容
-    content = data['content']
-    content_list.append(content)
-```
-保存数据到 csv 文件：
-```python
-# 保存数据到DF
-df = pd.DataFrame(
-    {
-        '作品id': video_id,
-        '作品链接': 'https://www.kuaishou.com/short-video/' + video_id,
-        '页码': page,
-        '用户昵称': author_name_list,
-        '用户id': author_id_list,
-        '用户主页': author_link_list,
-        '评论时间': create_time_list,
-        '评论点赞数': like_count_list,
-        '评论级别': comment_level_list,
-        '评论内容': content_list,
-    }
-)
-# 保存到csv
-if os.path.exists(self.result_file2):  # 如果文件存在，不再设置表头
-    header = False
-else:  # 否则，设置csv文件表头
-    header = True
-df.to_csv(self.result_file2, mode='a+', index=False, header=header, encoding='utf_8_sig')
-self.tk_show('视频[{}]第{}页已保存到csv: {}'.format(video_id, page, self.result_file2))
-```
-日志记录模块：
-```python
-def get_logger(self):
-    logger = logging.getLogger(__name__)
-    formatter = "[%(asctime)s-%(filename)s][%(funcName)s-%(lineno)d]--%(message)s"
-    logger.setLevel(logging.DEBUG)
-    if not logger.handlers:
-        sh = logging.StreamHandler()
-        log_formatter = logging.Formatter(formatter, datefmt="%Y-%m-%d %H:%M:%S")
-        info_file_name = time.strftime("%Y-%m-%d") + ".log"
-        case_dir = "./logs/"
-        info_handler = TimedRotatingFileHandler(
-            filename=case_dir + info_file_name,
-            when="MIDNIGHT",
-            interval=1,
-            backupCount=7,
-            encoding="utf-8",
-        )
-        logger.addHandler(sh)
-        sh.setFormatter(log_formatter)
-        logger.addHandler(info_handler)
-        info_handler.setFormatter(log_formatter)
-    return logger
-```
+### 搜索作品数据
 
-# 三、使用指南
-## 3.1 配置 Cookie
-启动采集前，先用《cookie小工具》自动配置个人cookie：
-![cookie小工具](https://files.mdnice.com/user/32110/0c966293-1037-4ab8-a53b-60da648341e5.jpg)
+- 采集信息：关键词、页码
+- 作品信息：视频标题、话题标签、视频链接、视频时长、发布时间
+- 作者信息：作者昵称、作者 uid、作者主页链接
+- 互动数据：点赞数、观看数
 
-这样，就会自动写入软件目录下的 cookie.txt 文件，告别繁琐的手动获取过程。
-## 3.2 登录软件
-将 Cookie 配置好后，启动软件进入登录界面，点击登录完成身份认证。
-## 3.3 开始采集
-1. 登录成功，选择所需功能模块（搜索作品及评论采集 / 主页作品采集 / 链接转换）
-2. 配置参数（关键词、时间范围、目标链接等）
-3. 点击「开始执行」，实时查看采集进度
-4. 采集完成，在当前文件夹查看 csv 数据文件或已下载的视频
-## 3.4 演示视频
-软件完整使用流程请参考演示视频：[【工具演示】爬快手聚合软件](https://www.bilibili.com/video/BV1psRfBkEot/)
+<details>
+<summary>查看搜索作品完整字段</summary>
 
-# 四、付费说明
-## 4.1 卡密说明
-💰费用如下：
-```python
-日卡：使用期限1天，39元。适合试用等临时需求
-月卡：使用期限1个月，149元。适合短期采集需求
-季卡：使用期限3个月，399元。适合中期采集需求
-年卡：使用期限1年，799元。适合长期采集需求
-```
-🔑开通入口：
-```
-https://mgnb.pro/product/kuaishou
-```
+关键词、页码、视频标题、话题标签、视频链接、点赞数、观看数、视频时长_秒、发布时间、作者昵称、作者 uid、作者主页链接
 
-## 4.2 一机一码
-为防止软件被恶意转卖，采用一机一码机制，一个卡密只能在一台电脑运行、不可多电脑运行。
+</details>
 
-## 4.3 软件多开
-一台电脑仅允许运行一个软件，不支持软件多开。
+### 评论数据
 
-## 4.4 软件维护
-软件由本人独立原创开发，长期维护更新，提供稳定运行。
+- 采集信息：作品 id、作品链接、页码
+- 评论者信息：用户昵称、用户 id、用户主页
+- 评论信息：评论时间、评论点赞数、评论级别、评论内容
 
-# 五、软件获取
-公众号"**老男孩的平凡之路**"，后台回复"**爬快手聚合软件**"获取最新版软件安装包。[或点这里直达下载](https://github.com/mashukui/kuaishou_one_spider/releases/)
-<img width="1406" height="266" alt="二维码-公众号放底部v3" src="https://github.com/user-attachments/assets/0a2ce639-01ee-4061-a7a4-110b72bdd0ed" />
+<details>
+<summary>查看评论完整字段</summary>
 
+作品 id、作品链接、页码、用户昵称、用户 id、用户主页、评论时间、评论点赞数、评论级别、评论内容
+
+</details>
+
+### 作品详情数据
+
+- 采集信息：关键词、作品 id、作品链接
+- 作品信息：视频标题、话题标签、发布时间、视频时长、IP 属地、封面链接、视频直链
+- 作者信息：作者昵称、作者 uid、作者主页链接
+- 互动数据：点赞数、观看数、评论数、收藏数、转发数
+
+<details>
+<summary>查看作品详情完整字段</summary>
+
+关键词、作品 id、作品链接、视频标题、话题标签、作者昵称、作者 uid、作者主页链接、发布时间、视频时长_秒、点赞数、观看数、评论数、收藏数、转发数、IP 属地、封面链接、视频直链
+
+</details>
+
+### 主页作品数据
+
+- 采集信息：页码
+- 作者信息：作者昵称、uid、作者主页链接
+- 作品信息：视频标题、视频标签、视频链接、发布时间、视频时长
+- 互动数据：点赞数、收藏数、观看数
+
+<details>
+<summary>查看主页作品完整字段</summary>
+
+页码、作者昵称、uid、作者链接、视频标题、视频标签、视频链接、发布时间、视频时长、点赞数、收藏数、观看数
+
+</details>
+
+## 🛠️ 技术说明
+
+软件采用 Python 开发，核心模块包括：
+
+| 模块 | 用途 |
+| --- | --- |
+| tkinter | GUI 软件界面 |
+| requests | 接口请求 |
+| json | 响应数据解析 |
+| pandas | CSV 数据保存 |
+| logging | 运行日志记录 |
+
+软件通过接口协议采集数据，不依赖模拟浏览器等 RPA 操作。采集过程中默认按页保存结果，每页请求间隔约 1-2 秒，便于控制采集节奏并降低异常中断造成的数据损失。
+
+## 💰 价格说明
+
+| 类型 | 使用期限 | 价格 | 适用场景 |
+| --- | --- | --- | --- |
+| 日卡 | 1 天 | 39 元 | 临时试用、小批量任务 |
+| 月卡 | 1 个月 | 149 元 | 短期采集需求 |
+| 季卡 | 3 个月 | 399 元 | 中期采集需求 |
+| 年卡 | 1 年 | 799 元 | 长期稳定使用 |
+
+开通入口：[https://mgnb.pro/product/kuaishou](https://mgnb.pro/product/kuaishou)
+
+## 🔐 授权规则
+
+- 软件采用一机一码机制，一个卡密仅支持一台电脑使用。
+- 一台电脑仅允许运行一个软件实例，不支持多开。
+- 软件由作者长期维护，后续版本通过 GitHub Releases 发布。
+
+## ❓ 常见问题
+
+### 是否需要安装 Python？
+
+不需要。软件已打包为桌面客户端，下载对应系统版本后即可运行。
+
+### cookie 是做什么用的？
+
+cookie 用于让软件以当前账号状态访问平台数据。请使用自己的账号 cookie，并妥善保管相关文件。
+
+### 采集中断后数据会丢失吗？
+
+软件按页保存 CSV，不是等全部采集结束后才保存。即使中途中断，已完成页的数据通常仍会保留在结果文件中。
+
+### 结果文件保存在哪里？
+
+默认保存在软件所在文件夹。CSV、视频文件和日志文件会根据功能模块分别生成。
+
+### 支持采集多少数据？
+
+实际可采集数量会受到关键词、账号状态、平台接口返回、网络环境和采集频率等因素影响。建议合理设置采集范围和请求间隔。
+
+### 软件报错怎么办？
+
+请优先查看 `logs` 目录下的日志文件，并在反馈时提供以下信息：
+
+- 软件版本
+- 操作系统
+- 使用的功能模块
+- 输入的关键词、主页链接或作品链接
+- 报错截图
+- 对应时间段的日志内容
+
+## ⚠️ 合规声明
+
+本软件仅供合法合规的数据分析、学习研究和自有业务场景使用。使用者应自行遵守目标平台服务协议、隐私政策以及所在地法律法规。
+
+请勿将本软件用于以下用途：
+
+- 高频、恶意或破坏性请求
+- 未经授权采集、传播或售卖个人敏感信息
+- 侵犯平台、作者或用户合法权益的行为
+- 违反法律法规或平台规则的其他行为
+
+因使用者不当使用造成的风险和责任，由使用者自行承担。
+
+## 📦 获取软件
+
+- GitHub Releases：[https://github.com/mashukui/kuaishou_one_spider/releases/](https://github.com/mashukui/kuaishou_one_spider/releases/)
+- 公众号：`老男孩的平凡之路`
+- 公众号后台回复：`爬快手聚合软件`
+
+<img alt="二维码-公众号放底部v3" src="https://github.com/user-attachments/assets/0a2ce639-01ee-4061-a7a4-110b72bdd0ed" />
