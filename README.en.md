@@ -1,272 +1,261 @@
-# 🔥 Kuaishou Data Collector - GUI Software
+# kuaishou_one_spider
 
-[![Download Latest Version](https://img.shields.io/badge/Download-Latest_Release-brightgreen)](https://github.com/mashukui/kuaishou_one_spider/releases/)
+> 🔥 Kuaishou data collection tool / Kuaishou crawler GUI, supporting keyword video collection, comment collection, video detail collection, creator profile video collection, video download, CSV export, and link conversion.
+>
+> 💡 Supports Windows/macOS with no Python environment required. This repository is used for software introduction, release distribution, usage documentation, and issue feedback. The complete source code is not publicly available.
+>
+> [⬇️Download Latest Release](https://github.com/mashukui/kuaishou_one_spider/releases/) | [🎬Video Demo](https://www.bilibili.com/video/BV1psRfBkEot/) | [💳Purchase Access](https://mgnb.pro/product/kuaishou)
 
-[简体中文 README](README.md) | [English README](README.en.md)
+<p align="center">
+  <a href="README.md">简体中文 README</a> | <a href="README.en.md">English README</a>
+</p>
 
----
+## 👋 Overview
 
-Hi, I'm [@马哥python说](https://github.com/mashukui), a 10+ year software engineer, now working full-time as an independent developer.
+`kuaishou_one_spider` is a desktop GUI tool designed for Kuaishou data collection scenarios. It combines keyword video collection, comment collection, video detail collection, creator profile video collection, and link conversion into one client. Users do not need to install or configure a Python environment. Download the client, log in, and start using it.
 
-Kuaishou is one of China's leading short-video social platforms, known for its unique inclusive traffic distribution mechanism and vast creator ecosystem, covering users from first-tier cities to lower-tier markets. Whether it's trend tracking, content analysis, or audience insights, Kuaishou holds rich data value.
+It is suitable for the following scenarios:
 
-To harness this data, I built **"Kuaishou One Spider"** — a Python-based desktop tool that integrates three core data collection functions: **keyword search & comment collection**, **creator homepage post collection**, and **UID/link conversion**, providing an all-in-one data acquisition solution for Kuaishou.
+| Scenario | Description |
+| --- | --- |
+| ✅ Lead generation | Collect potential leads from comments under industry, brand, or competitor-related videos |
+| ✅ Public opinion analysis | Collect keyword-related videos and comments for hot event tracking, propagation analysis, and reputation analysis |
+| ✅ Content research | Analyze popular videos, topic tags, interaction data, and viral content directions |
+| ✅ Kuaishou operations | Convert profile links, Kuaishou IDs, uids, and video links between different formats, and archive collected data |
 
----
+## ⚙️ Features
 
-## 🎯 Use Cases
-
-- **Customer Acquisition** — Identify potential customers from comment sections under hot posts in target industries or brands
-- **Sentiment Analysis** — Collect Kuaishou topic data for social media monitoring, brand reputation research, etc.
-- **Content Research** — Analyze trending content styles and viral topics for content strategy
-- **Operations Collaboration** — Convert between different link/UID formats for cross-tool and cross-platform data workflows
-
----
-
-## ✨ Features
-
-### 1️⃣ Keyword Search & Comment Collection
-
-Search posts by keyword, then scrape comments at scale.
-
-**Collected fields (10):**
-
-| Field | Description |
-|-------|-------------|
-| Video ID | Unique identifier of the post |
-| Video Link | Direct link to the video |
-| Page | Pagination number |
-| Username | Commenter's nickname |
-| User ID | Commenter's unique ID |
-| User Profile | Commenter's homepage link |
-| Comment Time | Timestamp of the comment |
-| Likes | Like count on the comment |
-| Comment Level | Thread level (top-level/reply) |
-| Comment Content | The comment text |
-
-> Each page auto-saves to CSV (1-2s interval), preventing data loss on unexpected interruptions.
-
----
-
-### 2️⃣ Creator Homepage Post Collection
-
-Enter a creator's homepage link to scrape all their posts.
-
-**Collected fields (12):**
-
-| Field | Description |
-|-------|-------------|
-| Page | Pagination number |
-| Author Name | Creator's nickname |
-| UID | Creator's unique ID |
-| Author Link | Creator's profile link |
-| Video Title | Title of the post |
-| Video Tags | Topic/hashtag labels |
-| Video Link | Direct link to the post |
-| Publish Time | When it was posted |
-| Duration | Video length in seconds |
-| Likes | Like count |
-| Favorites | Favorite/bookmark count |
-| Views | View count |
-
-✅ Also supports **downloading video MP4 files** from the homepage for offline archiving.
-
----
-
-### 3️⃣ Post Detail Scraper
-
-Dive deeper into individual posts for richer metadata.
-
-**Collected fields (18):**
-
-| Field | Description |
-|-------|-------------|
-| Keyword | Search keyword |
-| Video ID | Unique post identifier |
-| Video Link | Direct post link |
-| Video Title | Title of the post |
-| Topic Tags | Hashtags associated |
-| Author Name | Creator's nickname |
-| Author UID | Creator's unique ID |
-| Author Profile | Creator's homepage link |
-| Publish Time | When it was published |
-| Duration | Video length in seconds |
-| Likes | Like count |
-| Views | View count |
-| Comments | Comment count |
-| Favorites | Favorite count |
-| Shares | Share count |
-| IP Location | Content IP location |
-| Cover Image | Cover image URL |
-| Video Direct Link | Direct video file URL |
-
-✅ Also supports **downloading the video MP4 file** for each post.
-
----
-
-### 4️⃣ UID / Link Conversion
-
-Convert between different Kuaishou link formats and UIDs — useful when handling links from various sources.
-
-| Input | Output |
-|-------|--------|
-| kuaishou.com/profile/xxxx | User UID |
-| kuaishou.com/short-video/xxx | Video ID |
-| Share link | Standard format |
-| UID | Profile link |
-
----
-
-## 🖥️ System Requirements
-
-- **Platform**: Windows / macOS
-- **Python Environment**: Not required — no setup needed
-- **Network**: Internet connection required
-
----
+| Feature | Description | Output |
+| --- | --- | --- |
+| ✅ Keyword video collection | Search Kuaishou videos by keyword and collect basic video data | CSV |
+| ✅ Comment collection | Collect comments from keyword search results or specified video links | CSV |
+| ✅ Video detail collection | Collect video details from video links and support video download | CSV, video files |
+| ✅ Creator profile video collection | Collect video lists from creator profile links and support video download | CSV, video files |
+| ✅ Link and uid conversion | Convert between profile links, Kuaishou IDs, uids, and video links | CSV |
+| ✅ Incremental saving | Save data to CSV after each page to reduce data loss caused by interruptions | CSV |
+| ✅ Runtime logs | Record runtime logs for troubleshooting | logs files |
 
 ## 🚀 Quick Start
 
-1. **Download** the latest release from the [Releases page](https://github.com/mashukui/kuaishou_one_spider/releases/)
-2. **Configure Cookie** using the built-in Cookie Tool (automatic — no manual copying needed)
-3. **Launch** the app, click **Login** to authenticate
-4. **Select a module**: Search & Comment / Homepage Scraper / Link Converter
-5. **Set parameters** (keyword, time range, target link, etc.)
-6. Click **Start** and watch the real-time progress
-7. Done! Check the CSV file or downloaded videos in current folder
+1. Open [Releases](https://github.com/mashukui/kuaishou_one_spider/releases/) and download the latest version.
+2. Extract the package and run the client for your operating system.
+3. Use the built-in cookie helper to configure your cookie.
+4. Log in to the software account.
+5. Select a collection module and enter a keyword, video link, or profile link.
+6. Click "Start" and wait for the collection task to finish.
+7. Check the CSV files, video files, and log files in the software directory.
 
-### Cookie Setup (One-Time)
+## 💻 Supported Platforms
 
-The software includes a **Cookie Tool** that automates cookie retrieval — no more manual header hunting. It writes your cookie directly to `cookie.txt` in the software directory.
+| Platform | Support |
+| --- | --- |
+| Windows | Supported. Download and run the Windows client |
+| macOS | Supported. Download and run the macOS client |
 
-![Cookie Tool](https://camo.githubusercontent.com/f42d0c66a0ebdcb2c5786dcf88edda87e7dc2324c41a67206e76df43ebfd769d/68747470733a2f2f66696c65732e6d646e6963652e636f6d2f757365722f33323131302f30633936363239332d313033372d346162382d613533622d3630646136343833343165352e6a7067)
+## 🖼️ Screenshots
 
----
+### Keyword Video and Comment Collection
 
-## 🧩 Technical Architecture
+Keyword video and comment collection interface:
 
-Built entirely in Python with the following modules:
+![Keyword video and comment collection interface](https://files.mdnice.com/user/32110/13464ab4-bbab-4f23-8de0-c54a298496f0.jpg)
+
+Search video result:
+
+![Search videos result](https://files.mdnice.com/user/32110/47514426-3972-4d2b-8f44-06321074ca95.png)
+
+Comment collection result:
+
+![Comments result](https://files.mdnice.com/user/32110/3da2ce78-8520-4516-9d96-5762cd681a1b.png)
+
+### Video Detail Collection
+
+Video detail collection interface:
+
+![Video detail collection interface](https://files.mdnice.com/user/32110/67a28f32-d288-43c2-9107-c01ebc53fbbb.jpg)
+
+Video detail collection result:
+
+![Video detail result](https://files.mdnice.com/user/32110/7f6b8bc9-d409-4f25-aa60-ab62b74cf7df.png)
+
+Automatically downloaded video files:
+
+![Video detail downloaded files](https://files.mdnice.com/user/32110/bbdd074e-7ffa-4d2a-94ab-2133544ee26b.png)
+
+### Creator Profile Video Collection
+
+Creator profile video collection interface:
+
+![Creator profile video collection interface](https://files.mdnice.com/user/32110/f604b457-bf2a-42ae-b412-9518c2cb5d39.jpg)
+
+Creator profile video collection result:
+
+![Creator profile video result](https://files.mdnice.com/user/32110/1bd49107-b206-4de2-9164-c51c9557fce6.png)
+
+Automatically downloaded creator profile video files:
+
+![Creator profile video downloaded files](https://files.mdnice.com/user/32110/815900e6-6fc0-4891-ac10-f0e5ec20b298.png)
+
+### Link and uid Conversion
+
+Convert a profile link to a Kuaishou ID:
+
+![Convert profile link to Kuaishou ID](https://files.mdnice.com/user/32110/4649de6f-36e0-4140-bfaa-e800117e81f3.jpg)
+
+![Profile link to Kuaishou ID result](https://files.mdnice.com/user/32110/1e9da0e4-1426-44ea-b377-308735ff2009.png)
+
+Convert a Kuaishou ID to a profile link:
+
+![Convert Kuaishou ID to profile link](https://files.mdnice.com/user/32110/a2b7808a-3381-4ee6-82eb-5b6dc5bd1d2a.jpg)
+
+![Kuaishou ID to profile link result](https://files.mdnice.com/user/32110/7448e10e-a262-4386-9259-4ef0bd985110.png)
+
+Convert a mobile app video link to a PC video link:
+
+![Convert app video link to PC video link](https://files.mdnice.com/user/32110/3ae828eb-9afc-4dd7-a107-a8b507b4b909.jpg)
+
+![App video link to PC video link result](https://files.mdnice.com/user/32110/f8b59751-21a1-4874-9535-1e1fe126fcfa.png)
+
+## 📊 Output Fields
+
+The software generates different CSV files based on the selected collection module. Since there are many fields, the main field groups are shown first. You can expand the sections below to view the full field lists.
+
+### Search Video Data
+
+- Collection info: keyword, page
+- Video info: video title, topic tags, video link, video duration, published time
+- Author info: author nickname, author uid, author profile link
+- Interaction data: likes, views
+
+<details>
+<summary>View full search video fields</summary>
+
+Keyword, page, video title, topic tags, video link, likes, views, video duration in seconds, published time, author nickname, author uid, author profile link
+
+</details>
+
+### Comment Data
+
+- Collection info: video id, video link, page
+- Commenter info: user nickname, user id, user profile
+- Comment info: comment time, comment likes, comment level, comment content
+
+<details>
+<summary>View full comment fields</summary>
+
+Video id, video link, page, user nickname, user id, user profile, comment time, comment likes, comment level, comment content
+
+</details>
+
+### Video Detail Data
+
+- Collection info: keyword, video id, video link
+- Video info: video title, topic tags, published time, video duration, IP location, cover link, direct video link
+- Author info: author nickname, author uid, author profile link
+- Interaction data: likes, views, comments, favorites, shares
+
+<details>
+<summary>View full video detail fields</summary>
+
+Keyword, video id, video link, video title, topic tags, author nickname, author uid, author profile link, published time, video duration in seconds, likes, views, comments, favorites, shares, IP location, cover link, direct video link
+
+</details>
+
+### Creator Profile Video Data
+
+- Collection info: page
+- Author info: author nickname, uid, author profile link
+- Video info: video title, video tags, video link, published time, video duration
+- Interaction data: likes, favorites, views
+
+<details>
+<summary>View full creator profile video fields</summary>
+
+Page, author nickname, uid, author link, video title, video tags, video link, published time, video duration, likes, favorites, views
+
+</details>
+
+## 🛠️ Technical Notes
+
+The software is developed in Python. Core modules include:
 
 | Module | Purpose |
-|--------|---------|
-| `tkinter` | GUI interface |
-| `requests` | HTTP requests |
-| `json` | API response parsing |
-| `pandas` | Data cleaning & CSV export |
-| `logging` | Activity logging |
+| --- | --- |
+| tkinter | GUI interface |
+| requests | API requests |
+| json | Response parsing |
+| pandas | CSV export |
+| logging | Runtime logging |
 
-### Key Code Snippets
-
-**Send request & parse data:**
-
-```python
-r = requests.get(url, headers=h1, params=params)
-json_data = r.json()
-```
-
-**Iterate comment data:**
-
-```python
-for data in json_data['rootCommentsV2']:
-    content = data['content']
-    content_list.append(content)
-```
-
-**Save to CSV:**
-
-```python
-df = pd.DataFrame({
-    'Video ID': video_id,
-    'Video Link': 'https://www.kuaishou.com/short-video/' + video_id,
-    'Page': page,
-    'Username': author_name_list,
-    'User ID': author_id_list,
-    'User Profile': author_link_list,
-    'Comment Time': create_time_list,
-    'Likes': like_count_list,
-    'Comment Level': comment_level_list,
-    'Comment Content': content_list,
-})
-if os.path.exists(self.result_file2):
-    header = False
-else:
-    header = True
-df.to_csv(self.result_file2, mode='a+', index=False, header=header, encoding='utf_8_sig')
-```
-
-**Logging configuration:**
-
-```python
-def get_logger(self):
-    logger = logging.getLogger(__name__)
-    formatter = "[%(asctime)s-%(filename)s][%(funcName)s-%(lineno)d]--%(message)s"
-    logger.setLevel(logging.DEBUG)
-    if not logger.handlers:
-        sh = logging.StreamHandler()
-        log_formatter = logging.Formatter(formatter, datefmt="%Y-%m-%d %H:%M:%S")
-        info_file_name = time.strftime("%Y-%m-%d") + ".log"
-        info_handler = TimedRotatingFileHandler(
-            filename="./logs/" + info_file_name,
-            when="MIDNIGHT",
-            interval=1,
-            backupCount=7,
-            encoding="utf-8",
-        )
-        logger.addHandler(sh)
-        sh.setFormatter(log_formatter)
-        logger.addHandler(info_handler)
-        info_handler.setFormatter(log_formatter)
-    return logger
-```
-
----
-
-## ⚠️ Important Notes
-
-1. **Windows / Mac** — both supported, no programming environment required
-2. Uses **API-based** data collection (not browser simulation / RPA), resulting in higher stability
-3. Auto-saves CSV after each page — prevents data loss from unexpected interruptions (1-2s interval between pages)
-4. Detailed logs recorded during runtime for troubleshooting
-5. **One device, one license** — each activation code works on a single machine only
-6. Only **one instance** allowed per computer (no multi-instance)
-
----
+The software collects data through interface requests and does not rely on browser automation or RPA-style operations. During collection, results are saved by page by default. The request interval is usually about 1-2 seconds, which helps control the collection pace and reduce data loss caused by unexpected interruptions.
 
 ## 💰 Pricing
 
-| Plan | Duration | Price | Best For |
-|------|----------|-------|----------|
-| 🟢 **Daily** | 1 day | **¥39** | Trial / one-time use |
-| 🔵 **Monthly** | 1 month | **¥149** | Short-term projects |
-| 🟠 **Quarterly** | 3 months | **¥399** | Medium-term needs |
-| 🔴 **Yearly** | 1 year | **¥799** | Long-term usage |
+| Plan | Duration | Price | Recommended Usage |
+| --- | --- | --- | --- |
+| Day pass | 1 day | 39 CNY | Trial use or small one-time tasks |
+| Monthly pass | 1 month | 149 CNY | Short-term collection needs |
+| Quarterly pass | 3 months | 399 CNY | Medium-term collection needs |
+| Yearly pass | 1 year | 799 CNY | Long-term stable use |
 
-🔑 **Purchase & Activate:** [https://mgnb.pro/product/kuaishou](https://mgnb.pro/product/kuaishou)
+Purchase page: [https://mgnb.pro/product/kuaishou](https://mgnb.pro/product/kuaishou)
 
-> License mechanism: One activation code binds to one computer (device-locked) to prevent unauthorized resale.
+## 🔐 License and Activation Rules
 
----
+- The software uses a one-device-one-license mechanism. One license key can only be used on one computer.
+- Only one software instance is allowed on a single computer. Multiple concurrent instances are not supported.
+- The software is maintained by the author, and future versions will be published through GitHub Releases.
 
-## 📹 Demo Video
+## ❓ FAQ
 
-Watch the full workflow here: [【Tool Demo】Kuaishou One Spider](https://mp.weixin.qq.com/s/bqP01MKMjP9oazzW0gkh0Q)
+### Do I need to install Python?
 
----
+No. The software is packaged as a desktop client. Download the version for your operating system and run it directly.
 
-## 📦 Download
+### What is the cookie used for?
 
-> **Official WeChat Account**: Follow "老男孩的平凡之路" and reply "爬快手聚合软件" to get the latest version.
->
-> Or download directly from: [GitHub Releases](https://github.com/mashukui/kuaishou_one_spider/releases/)
+The cookie allows the software to access platform data under your current account session. Please use your own account cookie and keep related files secure.
 
-<img width="1938" height="364" alt="二维码-公众号放底部v2" src="https://github.com/user-attachments/assets/58399737-5e17-4d61-b0fc-aa6f312dec83" />
+### Will collected data be lost if the task is interrupted?
 
----
+The software saves CSV files by page instead of waiting until the whole task is complete. If the task is interrupted, data from completed pages is usually still preserved in the result files.
 
-## 📄 License
+### Where are result files saved?
 
-This software is developed and maintained by [@马哥python说](https://github.com/mashukui). Regular updates and long-term support provided.
+By default, result files are saved in the software directory. CSV files, video files, and log files are generated by feature module.
 
----
+### How much data can it collect?
 
-*Built with ❤️ by an indie developer. For questions or feedback, open an issue or reach out via the official WeChat account above.*
+The actual amount of data depends on the keyword, account status, platform API response, network environment, and collection frequency. It is recommended to set a reasonable collection range and request interval.
+
+### What should I do if an error occurs?
+
+Check the log files under the `logs` directory first. When reporting an issue, please provide:
+
+- Software version
+- Operating system
+- Feature module used
+- Keyword, profile link, or video link entered
+- Error screenshot
+- Log content around the time when the error occurred
+
+## ⚠️ Compliance Statement
+
+This software is intended only for lawful data analysis, learning, research, and authorized business scenarios. Users are responsible for complying with the target platform's terms of service, privacy policy, and applicable laws and regulations.
+
+Do not use this software for:
+
+- High-frequency, malicious, or destructive requests
+- Unauthorized collection, distribution, or sale of sensitive personal information
+- Activities that infringe the lawful rights of platforms, creators, or users
+- Any other behavior that violates laws, regulations, or platform rules
+
+Users are solely responsible for risks and liabilities caused by improper use.
+
+## 📦 Get the Software
+
+- GitHub Releases: [https://github.com/mashukui/kuaishou_one_spider/releases/](https://github.com/mashukui/kuaishou_one_spider/releases/)
+- WeChat official account: `老男孩的平凡之路`
+- Reply in the WeChat official account: `爬快手聚合软件`
+
+<img alt="WeChat official account QR code" src="https://github.com/user-attachments/assets/0a2ce639-01ee-4061-a7a4-110b72bdd0ed" />
