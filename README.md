@@ -255,7 +255,6 @@ cookie 用于让软件以当前账号状态访问平台数据。请使用自己�
 ## 📦 获取软件
 
 - GitHub Releases：[https://github.com/mashukui/kuaishou_one_spider/releases/](https://github.com/mashukui/kuaishou_one_spider/releases/)
-- 公众号：`老男孩的平凡之路`
-- 公众号后台回复：`爬快手聚合软件`
+- 公众号 `老男孩的平凡之路` 后台回复：`快手`
 
-<img alt="二维码-公众号放底部v3" src="https://github.com/user-attachments/assets/0a2ce639-01ee-4061-a7a4-110b72bdd0ed" />
+<img width="573" height="196" alt="二维码-公众号放底部v4" src="https://github.com/user-attachments/assets/7508c875-4df8-4442-a532-a2a9d10b1833" />
