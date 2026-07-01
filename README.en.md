@@ -256,6 +256,6 @@ Users are solely responsible for risks and liabilities caused by improper use.
 
 - GitHub Releases: [https://github.com/mashukui/kuaishou_one_spider/releases/](https://github.com/mashukui/kuaishou_one_spider/releases/)
 - WeChat official account: `老男孩的平凡之路`
-- Reply in the WeChat official account: `爬快手聚合软件`
+- Reply in the WeChat official account: `快手`
 
-<img alt="WeChat official account QR code" src="https://github.com/user-attachments/assets/0a2ce639-01ee-4061-a7a4-110b72bdd0ed" />
+<img width="573" height="196" alt="二维码-公众号放底部v4" src="https://github.com/user-attachments/assets/0ee61a5c-4091-4d54-b824-273e111b1f75" />
