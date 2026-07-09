@@ -229,15 +229,19 @@
             height: auto;
             display: block;
         }
-        .carousel-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,.75));
+        .carousel-caption-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 52px;
             color: #fff;
-            padding: 2rem 1.5rem 1.2rem;
+            background: #1a1a2e;
+            border-top: 1px solid rgba(255,255,255,.12);
+            padding: .85rem 4.5rem;
             font-size: .95rem;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.45;
         }
         .carousel-btn {
             position: absolute;
@@ -263,7 +267,7 @@
         .carousel-next { right: 1rem; }
         .carousel-dots {
             position: absolute;
-            bottom: 3.5rem;
+            bottom: 4.6rem;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -386,8 +390,9 @@
             .section { padding: 1.2rem; }
             .price-grid { grid-template-columns: 1fr 1fr; }
             .feature-grid { grid-template-columns: 1fr; }
-            .carousel-dots { bottom: 2.8rem; gap: .35rem; }
+            .carousel-dots { bottom: 4.3rem; gap: .35rem; }
             .carousel-dot { width: 8px; height: 8px; }
+            .carousel-caption-bar { padding: .8rem 1rem; font-size: .85rem; }
         }
     </style>
 </head>
@@ -559,49 +564,31 @@
     <div class="carousel" id="carousel">
         <div class="carousel-track" id="carouselTrack">
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/13464ab4-bbab-4f23-8de0-c54a298496f0.jpg" alt="关键词作品与评论采集界面">
-                <div class="carousel-caption lang-zh">📌 关键词作品与评论采集界面</div>
-                <div class="carousel-caption lang-en">📌 Keyword search & comment crawl interface</div>
+                <img src="images/s01.jpg" alt="关键词作品与评论采集界面">
             </div>
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/47514426-3972-4d2b-8f44-06321074ca95.png" alt="搜索作品结果">
-                <div class="carousel-caption lang-zh">🔍 搜索作品结果展示</div>
-                <div class="carousel-caption lang-en">🔍 Search results for posts</div>
+                <img src="images/s02.png" alt="搜索作品结果">
             </div>
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/3da2ce78-8520-4516-9d96-5762cd681a1b.png" alt="评论采集结果">
-                <div class="carousel-caption lang-zh">💬 评论采集结果</div>
-                <div class="carousel-caption lang-en">💬 Comment crawl results</div>
+                <img src="images/s03.png" alt="评论采集结果">
             </div>
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/67a28f32-d288-43c2-9107-c01ebc53fbbb.jpg" alt="作品详情采集界面">
-                <div class="carousel-caption lang-zh">📋 作品详情采集界面</div>
-                <div class="carousel-caption lang-en">📋 Post detail scraping interface</div>
+                <img src="images/s04.jpg" alt="作品详情采集界面">
             </div>
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/7f6b8bc9-d409-4f25-aa60-ab62b74cf7df.png" alt="作品详情采集结果">
-                <div class="carousel-caption lang-zh">📊 作品详情采集结果</div>
-                <div class="carousel-caption lang-en">📊 Post detail scrape results</div>
+                <img src="images/s05.png" alt="作品详情采集结果">
             </div>
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/bbdd074e-7ffa-4d2a-94ab-2133544ee26b.png" alt="下载视频文件">
-                <div class="carousel-caption lang-zh">📥 下载视频文件</div>
-                <div class="carousel-caption lang-en">📥 Video file download</div>
+                <img src="images/s06.png" alt="下载视频文件">
             </div>
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/f604b457-bf2a-42ae-b412-9518c2cb5d39.jpg" alt="主页作品采集界面">
-                <div class="carousel-caption lang-zh">🏠 主页作品采集界面</div>
-                <div class="carousel-caption lang-en">🏠 Profile post scraping interface</div>
+                <img src="images/s07.jpg" alt="主页作品采集界面">
             </div>
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/1bd49107-b206-4de2-9164-c51c9557fce6.png" alt="主页作品采集结果">
-                <div class="carousel-caption lang-zh">📈 主页作品采集结果</div>
-                <div class="carousel-caption lang-en">📈 Profile post scrape results</div>
+                <img src="images/s08.png" alt="主页作品采集结果">
             </div>
             <div class="carousel-slide">
-                <img src="https://files.mdnice.com/user/32110/815900e6-6fc0-4891-ac10-f0e5ec20b298.png" alt="主页视频文件">
-                <div class="carousel-caption lang-zh">🎬 主页视频文件</div>
-                <div class="carousel-caption lang-en">🎬 Profile video files</div>
+                <img src="images/s09.png" alt="主页视频文件">
             </div>
         </div>
         <button class="carousel-btn carousel-prev" onclick="moveSlide(-1)">◀</button>
@@ -617,6 +604,7 @@
             <button class="carousel-dot" onclick="goToSlide(7)"></button>
             <button class="carousel-dot" onclick="goToSlide(8)"></button>
         </div>
+        <div class="carousel-caption-bar" id="carouselCaption">📌 关键词作品与评论采集界面</div>
     </div>
 </div>
 
@@ -811,11 +799,25 @@ var currentSlide = 0;
 var totalSlides = 9;
 var track = document.getElementById('carouselTrack');
 var dots = document.querySelectorAll('.carousel-dot');
+var caption = document.getElementById('carouselCaption');
 var autoTimer;
+var captions = [
+    { zh: '📌 关键词作品与评论采集界面', en: '📌 Keyword search & comment crawl interface' },
+    { zh: '🔍 搜索作品结果展示', en: '🔍 Search results for posts' },
+    { zh: '💬 评论采集结果', en: '💬 Comment crawl results' },
+    { zh: '📋 作品详情采集界面', en: '📋 Post detail scraping interface' },
+    { zh: '📊 作品详情采集结果', en: '📊 Post detail scrape results' },
+    { zh: '📥 下载视频文件', en: '📥 Video file download' },
+    { zh: '🏠 主页作品采集界面', en: '🏠 Profile post scraping interface' },
+    { zh: '📈 主页作品采集结果', en: '📈 Profile post scrape results' },
+    { zh: '🎬 主页视频文件', en: '🎬 Profile video files' }
+];
 
 function updateCarousel() {
     track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
     dots.forEach(function(d, i) { d.classList.toggle('active', i === currentSlide); });
+    var lang = document.documentElement.getAttribute('lang') === 'en' ? 'en' : 'zh';
+    caption.textContent = captions[currentSlide][lang];
 }
 function moveSlide(dir) {
     currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
@@ -845,6 +847,7 @@ function switchLang(lang) {
         btn.classList.toggle('active',
             btn.textContent.trim() === (lang === 'zh-CN' ? '中文' : 'EN'));
     });
+    updateCarousel();
     // save preference
     try { localStorage.setItem('kuaishou-spider-lang', lang); } catch(e) {}
 }
