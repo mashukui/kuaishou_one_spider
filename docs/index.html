@@ -1,863 +1,923 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>快手聚合采集 - Kuaishou Crawler</title>
-    <style>
-        :root {
-            --red: #ff6b00;
-            --dark: #1a1a2e;
-            --bg: #f8f9fa;
-            --card: #ffffff;
-            --text: #333333;
-            --muted: #666666;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="快手采集软件，支持关键词作品采集、评论采集、作品详情采集、主页作品采集、视频下载、链接转换和 CSV 导出，Windows/macOS 免 Python 环境运行。">
+  <meta name="keywords" content="快手采集软件,快手评论采集,快手作品采集,快手主页作品采集,快手视频下载,kuaishou crawler">
+  <meta property="og:title" content="快手采集软件 - 作品评论采集、主页作品采集、视频下载工具">
+  <meta property="og:description" content="桌面 GUI 工具，支持快手关键词作品、评论、作品详情、主页作品、视频下载和 CSV 导出。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mashukui.github.io/kuaishou_one_spider/">
+  <meta property="og:image" content="https://mashukui.github.io/kuaishou_one_spider/images/s01.jpg">
+  <title>快手采集软件 - 快手作品评论采集、主页作品采集、视频下载工具</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-soft: #fff7f1;
+      --text: #15171a;
+      --muted: #656d76;
+      --line: #e7e9ee;
+      --accent: #ff6a00;
+      --accent-dark: #d84f00;
+      --green: #12715b;
+      --blue: #2457c5;
+      --shadow: 0 18px 50px rgba(25, 28, 33, .10);
+      --radius: 14px;
+    }
 
-        /* ── Language Switcher ── */
-        .lang-switcher {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1000;
-            display: flex;
-            gap: 4px;
-            background: rgba(255,255,255,.85);
-            backdrop-filter: blur(8px);
-            border-radius: 20px;
-            padding: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.12);
-        }
-        .lang-btn {
-            border: none;
-            padding: 6px 14px;
-            border-radius: 16px;
-            font-size: .85rem;
-            font-weight: 600;
-            cursor: pointer;
-            background: transparent;
-            color: var(--muted);
-            transition: all .2s;
-            font-family: inherit;
-        }
-        .lang-btn.active {
-            background: var(--red);
-            color: #fff;
-        }
-        .lang-btn:hover:not(.active) {
-            background: #fff3e8;
-            color: var(--red);
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        /* ── Language visibility ── */
-        html[lang="zh-CN"] .lang-en { display: none !important; }
-        html[lang="en"] .lang-zh { display: none !important; }
+    html {
+      scroll-behavior: smooth;
+    }
 
-        /* ── Hero ── */
-        .hero {
-            background: linear-gradient(135deg, #e65c00 0%, #ff6b00 50%, #ff8c42 100%);
-            color: #fff;
-            padding: 4rem 2rem 3rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.2; }
-        }
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.8rem;
-            position: relative;
-            z-index: 1;
-        }
-        .hero p {
-            font-size: 1.15rem;
-            opacity: .92;
-            max-width: 600px;
-            margin: 0 auto 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-        .hero .badges {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            position: relative;
-            z-index: 1;
-        }
-        .hero .badge {
-            background: rgba(255,255,255,.2);
-            backdrop-filter: blur(6px);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: .9rem;
-        }
-        .hero .cta-btn {
-            display: inline-block;
-            margin-top: 1.8rem;
-            background: #fff;
-            color: var(--red);
-            padding: 14px 48px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            position: relative;
-            z-index: 1;
-            transition: transform .15s, box-shadow .15s;
-        }
-        .hero .cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,.2);
-        }
-        .hero .cta-sub {
-            display: block;
-            margin-top: .5rem;
-            font-size: .85rem;
-            opacity: .75;
-            position: relative;
-            z-index: 1;
-        }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
 
-        /* ── Container ── */
-        .container {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 0 1.5rem 3rem;
-        }
+    a {
+      color: inherit;
+    }
 
-        /* ── Section ── */
-        .section {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 1.5rem;
-            box-shadow: 0 1px 4px rgba(0,0,0,.06);
-        }
-        .section h2 {
-            font-size: 1.35rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-        }
-        .section h2 .icon { font-size: 1.3rem; }
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, .88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(231, 233, 238, .86);
+    }
 
-        /* ── Feature Grid ── */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-        }
-        .feature-card {
-            background: #fafafa;
-            padding: 1.2rem;
-            border-radius: 10px;
-            border-left: 3px solid var(--red);
-        }
-        .feature-card h3 { font-size: 1rem; margin-bottom: .4rem; }
-        .feature-card p { font-size: .9rem; color: var(--muted); }
+    .nav {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
 
-        /* ── Steps ── */
-        .steps { counter-reset: step; }
-        .step {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-            padding: .8rem 0;
-            border-bottom: 1px solid #eee;
-        }
-        .step:last-child { border-bottom: none; }
-        .step-num {
-            counter-increment: step;
-            background: var(--red);
-            color: #fff;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: .9rem;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        .step-body h4 { font-size: 1rem; margin-bottom: .2rem; }
-        .step-body p { color: var(--muted); font-size: .9rem; }
-        .step-body a { color: var(--red); }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      text-decoration: none;
+      font-weight: 800;
+    }
 
-        /* ── Carousel ── */
-        .carousel {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            background: #1a1a2e;
-        }
-        .carousel-track {
-            display: flex;
-            align-items: flex-start;
-            transition: transform .4s ease;
-        }
-        .carousel-slide {
-            min-width: 100%;
-            position: relative;
-            line-height: 0;
-        }
-        .carousel-slide img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        .carousel-caption-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 52px;
-            color: #fff;
-            background: #1a1a2e;
-            border-top: 1px solid rgba(255,255,255,.12);
-            padding: .85rem 4.5rem;
-            font-size: .95rem;
-            font-weight: 600;
-            text-align: center;
-            line-height: 1.45;
-        }
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,.85);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.1rem;
-            cursor: pointer;
-            z-index: 10;
-            transition: background .2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--dark);
-            box-shadow: 0 2px 8px rgba(0,0,0,.15);
-        }
-        .carousel-btn:hover { background: #fff; }
-        .carousel-prev { left: 1rem; }
-        .carousel-next { right: 1rem; }
-        .carousel-dots {
-            position: absolute;
-            bottom: 4.6rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: .5rem;
-            z-index: 10;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 0 1rem;
-        }
-        .carousel-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.4);
-            border: none;
-            cursor: pointer;
-            transition: background .2s;
-            padding: 0;
-        }
-        .carousel-dot.active { background: #fff; }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--accent);
+      font-size: 16px;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
 
-        /* ── Price Table ── */
-        .price-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: .8rem;
-        }
-        .price-card {
-            background: #fafafa;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            transition: border-color .2s;
-        }
-        .price-card:hover { border-color: var(--red); }
-        .price-card.featured {
-            border-color: var(--red);
-            background: #fff8f3;
-        }
-        .price-card .name { font-weight: 700; font-size: 1.1rem; margin-bottom: .3rem; }
-        .price-card .duration { font-size: .8rem; color: var(--muted); margin-bottom: .8rem; }
-        .price-card .money { font-size: 1.6rem; font-weight: 800; color: var(--red); }
-        .price-card .money span { font-size: .8rem; font-weight: 400; }
-        .price-card .scene { font-size: .8rem; color: var(--muted); margin-top: .5rem; }
+    .brand span:last-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-        /* ── FAQ ── */
-        .faq-item {
-            border: 1px solid #eee;
-            border-radius: 10px;
-            margin-bottom: .8rem;
-            overflow: hidden;
-        }
-        .faq-q {
-            background: #fafafa;
-            padding: 1rem 1.2rem;
-            font-weight: 600;
-            font-size: .95rem;
-            cursor: default;
-            user-select: none;
-        }
-        .faq-a {
-            padding: 1rem 1.2rem;
-            font-size: .9rem;
-            color: var(--muted);
-            border-top: 1px solid #eee;
-        }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-        /* ── Tech Table ── */
-        .tech-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: .6rem;
-        }
-        .tech-item {
-            background: #fafafa;
-            padding: .7rem 1rem;
-            border-radius: 8px;
-            text-align: center;
-            font-size: .85rem;
-        }
-        .tech-item strong { display: block; font-size: .95rem; margin-bottom: .1rem; }
+    .nav-links a {
+      text-decoration: none;
+    }
 
-        /* ── Footer CTA ── */
-        .footer-cta {
-            background: linear-gradient(135deg, #1a1a2e, #2d2d44);
-            color: #fff;
-            text-align: center;
-            padding: 3rem 2rem;
-            margin-top: 2rem;
-            border-radius: 12px;
-        }
-        .footer-cta h3 { font-size: 1.4rem; margin-bottom: .5rem; }
-        .footer-cta p { opacity: .8; margin-bottom: 1.5rem; }
-        .footer-cta a {
-            display: inline-block;
-            background: var(--red);
-            color: #fff;
-            padding: 14px 48px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: transform .15s;
-        }
-        .footer-cta a:hover { transform: scale(1.03); }
+    .nav-links a:hover {
+      color: var(--accent-dark);
+    }
 
-        /* ── Footer ── */
-        .site-footer {
-            text-align: center;
-            padding: 2rem 0;
-            color: #aaa;
-            font-size: .85rem;
-        }
-        .site-footer a { color: #999; text-decoration: none; }
+    .nav-cta {
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: #fff !important;
+      background: var(--accent);
+      font-weight: 700;
+    }
 
-        /* ── Responsive ── */
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 1.7rem; }
-            .section { padding: 1.2rem; }
-            .price-grid { grid-template-columns: 1fr 1fr; }
-            .feature-grid { grid-template-columns: 1fr; }
-            .carousel-dots { bottom: 4.3rem; gap: .35rem; }
-            .carousel-dot { width: 8px; height: 8px; }
-            .carousel-caption-bar { padding: .8rem 1rem; font-size: .85rem; }
-        }
-    </style>
+    main {
+      overflow: hidden;
+    }
+
+    .hero {
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 72px 22px 54px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
+      gap: 48px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid #ffd3b2;
+      border-radius: 999px;
+      background: #fff8f2;
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      margin: 18px 0 18px;
+      max-width: 760px;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      font-weight: 800;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(25, 28, 33, .10);
+      border-color: #ffc79e;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: #fff;
+    }
+
+    .hero-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero-media {
+      position: relative;
+    }
+
+    .screen {
+      overflow: hidden;
+      border: 1px solid #dfe3ea;
+      border-radius: var(--radius);
+      background: #111827;
+      box-shadow: var(--shadow);
+    }
+
+    .screen-bar {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 12px;
+      background: #202938;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #6b7280;
+    }
+
+    .dot:nth-child(1) {
+      background: #ff6b65;
+    }
+
+    .dot:nth-child(2) {
+      background: #ffbf47;
+    }
+
+    .dot:nth-child(3) {
+      background: #30c36b;
+    }
+
+    .screen img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .metric {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 62px 22px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: clamp(26px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 560px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card {
+      min-height: 100%;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .card .tag {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #f1f4f8;
+      color: #46505c;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .feature-row {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .feature-row strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .feature-row span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .gallery {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 12px 36px rgba(25, 28, 33, .08);
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .gallery-caption {
+      padding: 14px 16px;
+      border-top: 1px solid var(--line);
+      font-weight: 800;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-shot {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      text-decoration: none;
+    }
+
+    .mini-shot img {
+      width: 96px;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+    }
+
+    .mini-shot strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .mini-shot span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .step::before {
+      content: counter(step);
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: #fff;
+      background: var(--accent);
+      font-weight: 900;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .price {
+      position: relative;
+      padding: 22px 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .price.featured {
+      border-color: #ffb37c;
+      background: var(--surface-soft);
+    }
+
+    .price .name {
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .price .money {
+      margin: 12px 0 4px;
+      color: var(--accent-dark);
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .price .duration,
+    .price .scene {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .price .badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .notice {
+      padding: 20px;
+      border: 1px solid #cfe7df;
+      border-radius: var(--radius);
+      background: #f3fbf8;
+      color: #1f4f43;
+    }
+
+    .notice strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--green);
+    }
+
+    .faq {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 16px 18px;
+      font-weight: 800;
+    }
+
+    details p {
+      margin: 0;
+      padding: 0 18px 18px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .final-cta {
+      max-width: 1160px;
+      margin: 64px auto 0;
+      padding: 34px 22px;
+    }
+
+    .final-cta-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+      padding: 28px;
+      border-radius: 18px;
+      background: #16191f;
+      color: #fff;
+    }
+
+    .final-cta h2 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 3vw, 36px);
+    }
+
+    .final-cta p {
+      margin: 0;
+      color: rgba(255, 255, 255, .72);
+    }
+
+    .footer {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 24px 22px 44px;
+      color: var(--muted);
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+      margin-left: 12px;
+    }
+
+    .footer a:hover {
+      color: var(--accent-dark);
+    }
+
+    @media (max-width: 900px) {
+      .hero-inner,
+      .showcase,
+      .final-cta-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-4,
+      .grid-3,
+      .pricing,
+      .faq,
+      .feature-list {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero-inner {
+        padding-top: 46px;
+      }
+
+      .nav-links a:not(.nav-cta) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .nav {
+        padding: 12px 16px;
+      }
+
+      .hero-inner,
+      .section,
+      .final-cta,
+      .footer {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .grid-4,
+      .grid-3,
+      .pricing,
+      .faq,
+      .feature-list,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 10px;
+      }
+
+      .mini-shot {
+        grid-template-columns: 82px 1fr;
+      }
+
+      .mini-shot img {
+        width: 82px;
+      }
+
+      .actions .btn {
+        width: 100%;
+      }
+
+      .footer a {
+        margin-left: 0;
+        margin-right: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <header class="site-header">
+    <nav class="nav" aria-label="主导航">
+      <a class="brand" href="#">
+        <span class="brand-mark">K</span>
+        <span>kuaishou_one_spider</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">功能</a>
+        <a href="#showcase">截图</a>
+        <a href="#pricing">价格</a>
+        <a href="https://github.com/mashukui/kuaishou_one_spider" target="_blank" rel="noopener">GitHub</a>
+        <a class="nav-cta" href="https://mgnb.pro/product/kuaishou" target="_blank" rel="noopener">开通使用</a>
+      </div>
+    </nav>
+  </header>
 
-<!-- ═══════════ Language Switcher ═══════════ -->
-<div class="lang-switcher">
-    <button class="lang-btn active" onclick="switchLang('zh-CN')">中文</button>
-    <button class="lang-btn" onclick="switchLang('en')">EN</button>
-</div>
-
-<!-- ═══════════ HERO ═══════════ -->
-<header class="hero">
-
-    <h1 class="lang-zh">🎬 快手聚合采集</h1>
-    <h1 class="lang-en">🎬 Kuaishou Crawler</h1>
-
-    <p class="lang-zh">关键词作品采集·评论采集·作品详情采集·主页作品采集·视频下载·CSV导出，GUI开箱即用</p>
-    <p class="lang-en">Keyword search · Comment crawling · Post details · Profile scraping · Video download · CSV export — GUI, ready to use</p>
-
-    <div class="badges lang-zh">
-        <span class="badge">🖥️ Windows + macOS</span>
-        <span class="badge">🚀 无需 Python 环境</span>
-        <span class="badge">🍪 内置Cookie工具</span>
-        <span class="badge">📦 开箱即用</span>
-    </div>
-    <div class="badges lang-en">
-        <span class="badge">🖥️ Windows + macOS</span>
-        <span class="badge">🚀 No Python required</span>
-        <span class="badge">🍪 Built-in Cookie tool</span>
-        <span class="badge">📦 Ready to use</span>
-    </div>
-
-    <a class="cta-btn" href="https://mgnb.pro/product/kuaishou" target="_blank">
-        <span class="lang-zh">💰 立即开通使用</span>
-        <span class="lang-en">💰 Get Started Now</span>
-    </a>
-    <span class="cta-sub lang-zh">日卡 ¥39 起 · 一机一码 · 持续更新维护</span>
-    <span class="cta-sub lang-en">Starting at ¥39/day · One device per license · Actively maintained</span>
-</header>
-
-<div class="container">
-
-<!-- ═══════════ 简介 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">👋</span> 软件简介</span>
-        <span class="lang-en"><span class="icon">👋</span> Overview</span>
-    </h2>
-    <p class="lang-zh">
-        <strong>kuaishou_one_spider</strong> 是一款面向快手平台数据采集场景的桌面 GUI 工具。
-        支持按关键词搜索作品、采集作品评论、获取作品详情信息、采集主页作品列表，
-        并提供视频下载和 CSV 数据导出功能。用户无需配置 Python 环境，下载客户端后登录即可使用。
-    </p>
-    <p class="lang-en">
-        <strong>kuaishou_one_spider</strong> is a desktop GUI tool for Kuaishou platform data collection.
-        Search posts by keyword, crawl comments, fetch post details, scrape profile post lists,
-        download videos, and export data as CSV. No Python setup required — just download and run.
-    </p>
-</div>
-
-<!-- ═══════════ 适用场景 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">🎯</span> 适用场景</span>
-        <span class="lang-en"><span class="icon">🎯</span> Use Cases</span>
-    </h2>
-    <div class="feature-grid">
-        <div class="feature-card">
-            <h3><span class="lang-zh">🎣 获客截流</span><span class="lang-en">🎣 Lead Generation</span></h3>
-            <p class="lang-zh">通过关键词采集目标用户作品和评论，精准获取潜在客户</p>
-            <p class="lang-en">Target users by keyword scraping their posts and comments for lead generation</p>
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <span class="eyebrow">快手采集桌面工具 · Windows/macOS</span>
+          <h1>快手作品、评论、主页作品和视频下载，一套客户端完成。</h1>
+          <p>支持关键词作品采集、评论采集、作品详情采集、主页作品采集、链接转换、视频下载和 CSV 导出。无需配置 Python 环境，下载客户端后登录即可使用。</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="https://mgnb.pro/product/kuaishou" target="_blank" rel="noopener">立即开通使用</a>
+            <a class="btn btn-secondary" href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank" rel="noopener">下载最新版</a>
+            <a class="btn btn-secondary" href="https://www.bilibili.com/video/BV1psRfBkEot/" target="_blank" rel="noopener">查看演示</a>
+          </div>
+          <div class="hero-note">日卡 39 元起，一机一码授权，版本通过 GitHub Releases 持续发布。</div>
         </div>
-        <div class="feature-card">
-            <h3><span class="lang-zh">📊 舆情分析</span><span class="lang-en">📊 Sentiment Analysis</span></h3>
-            <p class="lang-zh">采集品牌或话题相关评论，观察舆论趋势和用户态度</p>
-            <p class="lang-en">Track brand or topic discussions and user sentiment trends</p>
-        </div>
-        <div class="feature-card">
-            <h3><span class="lang-zh">🎬 内容创作</span><span class="lang-en">🎬 Content Creation</span></h3>
-            <p class="lang-zh">分析热门作品数据和评论区高频话题，辅助选题创作</p>
-            <p class="lang-en">Analyze trending post data and hot comment topics to guide content strategy</p>
-        </div>
-        <div class="feature-card">
-            <h3><span class="lang-zh">📱 快手运营</span><span class="lang-en">📱 Kuaishou Ops</span></h3>
-            <p class="lang-zh">批量采集竞品或同行的作品数据，辅助账号运营决策</p>
-            <p class="lang-en">Batch-scrape competitor post data to support account operations</p>
-        </div>
-    </div>
-</div>
 
-<!-- ═══════════ 功能概览 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">⚙️</span> 功能概览</span>
-        <span class="lang-en"><span class="icon">⚙️</span> Features</span>
-    </h2>
-    <div class="feature-grid">
-        <div class="feature-card">
-            <h3>✅ <span class="lang-zh">关键词作品采集</span><span class="lang-en">Keyword Post Search</span></h3>
-            <p class="lang-zh">按关键词搜索快手作品，批量采集搜索结果</p>
-            <p class="lang-en">Search Kuaishou posts by keywords and batch collect results</p>
+        <div class="hero-media" aria-label="软件界面预览">
+          <div class="screen">
+            <div class="screen-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <img src="images/s01.jpg" alt="快手关键词作品与评论采集界面">
+          </div>
+          <div class="metrics">
+            <div class="metric"><strong>4 类</strong><span>核心采集模式</span></div>
+            <div class="metric"><strong>CSV</strong><span>结构化导出</span></div>
+            <div class="metric"><strong>免环境</strong><span>无需安装 Python</span></div>
+          </div>
         </div>
-        <div class="feature-card">
-            <h3>✅ <span class="lang-zh">评论采集</span><span class="lang-en">Comment Crawling</span></h3>
-            <p class="lang-zh">采集指定作品的评论数据，支持子评论展开</p>
-            <p class="lang-en">Crawl comments for specific posts, including nested replies</p>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="section-head">
+        <h2>核心功能</h2>
+        <p>功能按真实采集流程组织：先找作品，再看评论和详情，也可以直接整理某个主页的公开作品。</p>
+      </div>
+      <div class="grid grid-4">
+        <article class="card">
+          <span class="tag">关键词</span>
+          <h3>作品采集</h3>
+          <p>按关键词搜索快手作品，整理标题、话题、作者、发布时间、播放和点赞等信息。</p>
+        </article>
+        <article class="card">
+          <span class="tag">评论区</span>
+          <h3>评论采集</h3>
+          <p>采集指定作品或搜索结果作品下的评论数据，导出评论内容、用户和互动信息。</p>
+        </article>
+        <article class="card">
+          <span class="tag">详情页</span>
+          <h3>作品详情</h3>
+          <p>根据作品链接采集播放、点赞、评论、收藏、分享、封面和视频直链等详情字段。</p>
+        </article>
+        <article class="card">
+          <span class="tag">主页</span>
+          <h3>主页作品</h3>
+          <p>输入目标用户主页，批量整理公开作品列表，并可按需下载视频文件。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>适合哪些使用场景</h2>
+        <p>公开页面介绍尽量保持中性，重点放在数据整理、账号研究和内容运营，避免夸大承诺。</p>
+      </div>
+      <div class="feature-list">
+        <div class="feature-row"><strong>内容研究</strong><span>整理某个关键词下的作品表现、话题方向和发布时间。</span></div>
+        <div class="feature-row"><strong>账号运营</strong><span>查看同行或目标账号的公开作品列表和更新情况。</span></div>
+        <div class="feature-row"><strong>评论整理</strong><span>批量导出评论内容、评论时间、点赞数和用户信息。</span></div>
+        <div class="feature-row"><strong>素材归档</strong><span>保存公开作品的基础信息、视频直链或本地视频文件。</span></div>
+        <div class="feature-row"><strong>链接处理</strong><span>处理 App 分享链接、PC 链接、主页链接、快手号和 UID。</span></div>
+        <div class="feature-row"><strong>数据复盘</strong><span>将结果导出为 CSV，在 Excel、WPS 或数据工具里继续分析。</span></div>
+      </div>
+    </section>
+
+    <section id="showcase" class="section">
+      <div class="section-head">
+        <h2>界面与结果展示</h2>
+        <p>以下截图展示主要模块的界面和导出结果。详细字段、Cookie 说明和反馈格式请查看 GitHub README。</p>
+      </div>
+      <div class="showcase">
+        <div class="gallery">
+          <img src="images/s05.png" alt="作品详情采集结果">
+          <div class="gallery-caption">作品详情采集结果：互动数据、发布时间、封面和视频直链等字段</div>
         </div>
-        <div class="feature-card">
-            <h3>✅ <span class="lang-zh">作品详情采集</span><span class="lang-en">Post Detail Scraping</span></h3>
-            <p class="lang-zh">获取作品详细信息：播放量、点赞、评论数等</p>
-            <p class="lang-en">Fetch post details: view count, likes, comments, etc.</p>
+        <div class="stack">
+          <a class="mini-shot" href="images/s02.png" target="_blank" rel="noopener">
+            <img src="images/s02.png" alt="搜索作品结果">
+            <span><strong>搜索作品结果</strong><span>关键词作品数据 CSV</span></span>
+          </a>
+          <a class="mini-shot" href="images/s03.png" target="_blank" rel="noopener">
+            <img src="images/s03.png" alt="评论采集结果">
+            <span><strong>评论采集结果</strong><span>评论内容和用户信息</span></span>
+          </a>
+          <a class="mini-shot" href="images/s08.png" target="_blank" rel="noopener">
+            <img src="images/s08.png" alt="主页作品采集结果">
+            <span><strong>主页作品采集</strong><span>公开主页作品列表</span></span>
+          </a>
+          <a class="mini-shot" href="images/s06.png" target="_blank" rel="noopener">
+            <img src="images/s06.png" alt="视频下载文件">
+            <span><strong>视频下载</strong><span>按任务保存视频文件</span></span>
+          </a>
         </div>
-        <div class="feature-card">
-            <h3>✅ <span class="lang-zh">主页作品采集</span><span class="lang-en">Profile Post Scraping</span></h3>
-            <p class="lang-zh">批量采集目标用户主页的全部公开作品</p>
-            <p class="lang-en">Batch-scrape all public posts from a user's profile</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>使用流程</h2>
+        <p>客户端已经打包好运行环境，主要工作是下载、配置 Cookie、选择模块并等待结果导出。</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div><strong>下载客户端</strong><span>从 GitHub Releases 下载最新版 Windows 或 macOS 客户端。</span></div></div>
+        <div class="step"><div><strong>配置 Cookie</strong><span>使用软件内置 Cookie 工具获取自己的快手账号登录态。</span></div></div>
+        <div class="step"><div><strong>登录授权</strong><span>使用购买后获得的卡密登录软件，一机一码授权。</span></div></div>
+        <div class="step"><div><strong>选择模块</strong><span>输入关键词、作品链接、主页链接、快手号或 UID，并选择是否下载视频。</span></div></div>
+        <div class="step"><div><strong>查看结果</strong><span>采集完成后，在软件所在目录查看 CSV、视频文件和日志文件。</span></div></div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="section-head">
+        <h2>价格与授权</h2>
+        <p>价格用于快速了解授权周期。实际开通、支付和售后说明以 mgnb.pro 商品页为准。</p>
+      </div>
+      <div class="pricing">
+        <div class="price">
+          <div class="name">日卡</div>
+          <div class="money">¥39</div>
+          <div class="duration">使用期限 1 天</div>
+          <div class="scene">临时试用、小批量任务</div>
         </div>
-        <div class="feature-card">
-            <h3>✅ <span class="lang-zh">链接uid转换</span><span class="lang-en">Link/UID Conversion</span></h3>
-            <p class="lang-zh">支持快手链接与用户 UID 互转，灵活输入</p>
-            <p class="lang-en">Convert between Kuaishou share links and user UIDs</p>
+        <div class="price featured">
+          <span class="badge">常用</span>
+          <div class="name">月卡</div>
+          <div class="money">¥149</div>
+          <div class="duration">使用期限 1 个月</div>
+          <div class="scene">短期采集需求</div>
         </div>
-        <div class="feature-card">
-            <h3>✅ <span class="lang-zh">自动保存</span><span class="lang-en">Auto-save</span></h3>
-            <p class="lang-zh">采集过程中持续保存，降低中断丢数风险</p>
-            <p class="lang-en">Continuous saving during crawling to prevent data loss</p>
+        <div class="price">
+          <div class="name">季卡</div>
+          <div class="money">¥399</div>
+          <div class="duration">使用期限 3 个月</div>
+          <div class="scene">中期采集需求</div>
         </div>
-        <div class="feature-card">
-            <h3>✅ <span class="lang-zh">运行日志</span><span class="lang-en">Activity Log</span></h3>
-            <p class="lang-zh">自动记录运行过程，方便事后排查问题</p>
-            <p class="lang-en">Detailed logs for troubleshooting</p>
+        <div class="price">
+          <div class="name">年卡</div>
+          <div class="money">¥799</div>
+          <div class="duration">使用期限 1 年</div>
+          <div class="scene">长期稳定使用</div>
         </div>
-    </div>
-</div>
+      </div>
+    </section>
 
-<!-- ═══════════ 快速开始 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">🚀</span> 快速开始</span>
-        <span class="lang-en"><span class="icon">🚀</span> Quick Start</span>
-    </h2>
-    <div class="steps lang-zh">
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>下载软件</h4><p>前往 <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">GitHub Releases</a> 下载最新版客户端</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>解压运行</h4><p>解压后双击运行对应系统的客户端（Windows 或 macOS）</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>获取Cookie</h4><p>使用软件内置的 <strong>Cookie小工具</strong> 一键获取快手 Cookie，无需手动抓包</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>登录账号</h4><p>使用购买后获得的卡密登录软件</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>输入目标</h4><p>输入搜索关键词 / 快手链接 / 用户 UID，选择采集模式</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>开始采集</h4><p>点击「开始执行」，等待采集完成</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>查看结果</h4><p>在软件所在目录查看 CSV 结果文件和运行日志</p></div></div>
-    </div>
-    <div class="steps lang-en">
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Download</h4><p>Get the latest release from <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">GitHub Releases</a></p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Extract & Run</h4><p>Unzip and launch the client for your OS (Windows or macOS)</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Get Cookie</h4><p>Use the built-in <strong>Cookie Tool</strong> to obtain Kuaishou cookies with one click — no manual packet capture needed</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Login</h4><p>Log in using the license key from your purchase</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Add Target</h4><p>Enter keywords, Kuaishou links, or user UIDs — choose crawl mode</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Start Crawling</h4><p>Click "Start" and wait for the crawl to complete</p></div></div>
-        <div class="step"><div class="step-num"></div><div class="step-body"><h4>View Results</h4><p>Open CSV files and logs in the app directory</p></div></div>
-    </div>
-</div>
+    <section class="section">
+      <div class="notice">
+        <strong>合规使用说明</strong>
+        本工具仅用于合法合规的数据整理、学习研究和自有业务场景。请使用自己的账号 Cookie，合理控制采集频率，不要采集、传播或售卖个人敏感信息，并自行遵守目标平台服务协议、隐私政策及所在地法律法规。
+      </div>
+    </section>
 
-<!-- ═══════════ 截图展示 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">🖼️</span> 功能展示</span>
-        <span class="lang-en"><span class="icon">🖼️</span> Screenshots</span>
-    </h2>
-    <div class="carousel" id="carousel">
-        <div class="carousel-track" id="carouselTrack">
-            <div class="carousel-slide">
-                <img src="images/s01.jpg" alt="关键词作品与评论采集界面">
-            </div>
-            <div class="carousel-slide">
-                <img src="images/s02.png" alt="搜索作品结果">
-            </div>
-            <div class="carousel-slide">
-                <img src="images/s03.png" alt="评论采集结果">
-            </div>
-            <div class="carousel-slide">
-                <img src="images/s04.jpg" alt="作品详情采集界面">
-            </div>
-            <div class="carousel-slide">
-                <img src="images/s05.png" alt="作品详情采集结果">
-            </div>
-            <div class="carousel-slide">
-                <img src="images/s06.png" alt="下载视频文件">
-            </div>
-            <div class="carousel-slide">
-                <img src="images/s07.jpg" alt="主页作品采集界面">
-            </div>
-            <div class="carousel-slide">
-                <img src="images/s08.png" alt="主页作品采集结果">
-            </div>
-            <div class="carousel-slide">
-                <img src="images/s09.png" alt="主页视频文件">
-            </div>
+    <section class="section">
+      <div class="section-head">
+        <h2>常见问题</h2>
+        <p>这里回答购买前最常见的问题。更细的字段说明和报错反馈格式请看 README。</p>
+      </div>
+      <div class="faq">
+        <details open>
+          <summary>是否需要安装 Python？</summary>
+          <p>不需要。软件已经打包为桌面客户端，下载对应系统版本后即可运行。</p>
+        </details>
+        <details>
+          <summary>Cookie 需要手动抓包吗？</summary>
+          <p>软件内置 Cookie 工具，用于辅助获取当前账号登录态，减少手动抓包操作。</p>
+        </details>
+        <details>
+          <summary>结果保存在哪里？</summary>
+          <p>默认保存在软件所在目录，CSV、视频文件和日志会按功能模块分别生成。</p>
+        </details>
+        <details>
+          <summary>采集中断后数据会丢失吗？</summary>
+          <p>软件会在采集过程中持续保存结果，已完成部分通常会保留在 CSV 文件中。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="final-cta-inner">
+        <div>
+          <h2>准备开始采集快手公开数据？</h2>
+          <p>先看演示或下载最新版，也可以直接进入商品页开通授权。</p>
         </div>
-        <button class="carousel-btn carousel-prev" onclick="moveSlide(-1)">◀</button>
-        <button class="carousel-btn carousel-next" onclick="moveSlide(1)">▶</button>
-        <div class="carousel-dots" id="carouselDots">
-            <button class="carousel-dot active" onclick="goToSlide(0)"></button>
-            <button class="carousel-dot" onclick="goToSlide(1)"></button>
-            <button class="carousel-dot" onclick="goToSlide(2)"></button>
-            <button class="carousel-dot" onclick="goToSlide(3)"></button>
-            <button class="carousel-dot" onclick="goToSlide(4)"></button>
-            <button class="carousel-dot" onclick="goToSlide(5)"></button>
-            <button class="carousel-dot" onclick="goToSlide(6)"></button>
-            <button class="carousel-dot" onclick="goToSlide(7)"></button>
-            <button class="carousel-dot" onclick="goToSlide(8)"></button>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://mgnb.pro/product/kuaishou" target="_blank" rel="noopener">开通使用</a>
+          <a class="btn btn-secondary" href="https://github.com/mashukui/kuaishou_one_spider/blob/main/README.md" target="_blank" rel="noopener">查看说明</a>
         </div>
-        <div class="carousel-caption-bar" id="carouselCaption">📌 关键词作品与评论采集界面</div>
-    </div>
-</div>
+      </div>
+    </section>
+  </main>
 
-<!-- ═══════════ 输出字段 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">📊</span> 输出数据说明</span>
-        <span class="lang-en"><span class="icon">📊</span> Output Fields</span>
-    </h2>
-    <p class="lang-zh" style="margin-bottom:1rem;">采集完成后生成结构化 CSV 文件，以下为各采集模式的输出字段：</p>
-    <p class="lang-en" style="margin-bottom:1rem;">After crawling, structured CSV files are generated with the following fields per mode:</p>
-    <div class="feature-grid">
-        <div class="feature-card">
-            <h3><span class="lang-zh">🔍 搜索作品</span><span class="lang-en">🔍 Search Posts</span></h3>
-            <p class="lang-zh">作品ID、标题、作者、播放量、点赞数、发布时间、作品链接</p>
-            <p class="lang-en">Post ID, title, author, views, likes, publish time, post URL</p>
-        </div>
-        <div class="feature-card">
-            <h3><span class="lang-zh">💬 评论</span><span class="lang-en">💬 Comments</span></h3>
-            <p class="lang-zh">评论ID、评论内容、评论者、点赞数、回复数、评论时间</p>
-            <p class="lang-en">Comment ID, content, author, likes, reply count, timestamp</p>
-        </div>
-        <div class="feature-card">
-            <h3><span class="lang-zh">📋 作品详情</span><span class="lang-en">📋 Post Details</span></h3>
-            <p class="lang-zh">作品ID、标题、描述、播放量、点赞、评论数、收藏、分享数</p>
-            <p class="lang-en">Post ID, title, description, views, likes, comments, favorites, shares</p>
-        </div>
-        <div class="feature-card">
-            <h3><span class="lang-zh">🏠 主页作品</span><span class="lang-en">🏠 Profile Posts</span></h3>
-            <p class="lang-zh">用户UID/昵称、作品ID、标题、播放量、点赞数、发布时间</p>
-            <p class="lang-en">User UID/name, post ID, title, views, likes, publish time</p>
-        </div>
-    </div>
-</div>
-
-<!-- ═══════════ 价格 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">💰</span> 价格说明</span>
-        <span class="lang-en"><span class="icon">💰</span> Pricing</span>
-    </h2>
-    <div class="price-grid">
-        <div class="price-card">
-            <div class="name lang-zh">日卡</div><div class="name lang-en">Daily</div>
-            <div class="duration lang-zh">使用期限 1 天</div><div class="duration lang-en">1 day</div>
-            <div class="money">¥39</div>
-            <div class="scene lang-zh">临时试用、小批量任务</div>
-            <div class="scene lang-en">Trial / small tasks</div>
-        </div>
-        <div class="price-card featured">
-            <div class="name lang-zh">月卡</div><div class="name lang-en">Monthly</div>
-            <div class="duration lang-zh">使用期限 1 个月</div><div class="duration lang-en">1 month</div>
-            <div class="money">¥149</div>
-            <div class="scene lang-zh">⭐ 短期采集需求</div>
-            <div class="scene lang-en">⭐ Short-term needs</div>
-        </div>
-        <div class="price-card">
-            <div class="name lang-zh">季卡</div><div class="name lang-en">Quarterly</div>
-            <div class="duration lang-zh">使用期限 3 个月</div><div class="duration lang-en">3 months</div>
-            <div class="money">¥399</div>
-            <div class="scene lang-zh">中期采集需求</div>
-            <div class="scene lang-en">Medium-term needs</div>
-        </div>
-        <div class="price-card">
-            <div class="name lang-zh">年卡</div><div class="name lang-en">Yearly</div>
-            <div class="duration lang-zh">使用期限 1 年</div><div class="duration lang-en">1 year</div>
-            <div class="money">¥799</div>
-            <div class="scene lang-zh">长期稳定使用</div>
-            <div class="scene lang-en">Long-term use</div>
-        </div>
-    </div>
-    <p style="text-align:center;margin-top:1.2rem;">
-        <a href="https://mgnb.pro/product/kuaishou" target="_blank" style="color:var(--red);font-weight:600;">
-            <span class="lang-zh">👉 立即开通</span>
-            <span class="lang-en">👉 Purchase Now</span>
-        </a>
-    </p>
-</div>
-
-<!-- ═══════════ 技术说明 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">🛠️</span> 技术说明</span>
-        <span class="lang-en"><span class="icon">🛠️</span> Tech Stack</span>
-    </h2>
-    <p class="lang-zh" style="margin-bottom:1rem;">采用 Python 开发，通过快手接口请求采集数据：</p>
-    <p class="lang-en" style="margin-bottom:1rem;">Built with Python. Data is fetched via Kuaishou APIs:</p>
-    <div class="tech-grid">
-        <div class="tech-item"><strong>tkinter</strong><span class="lang-zh">GUI 界面</span><span class="lang-en">GUI</span></div>
-        <div class="tech-item"><strong>requests</strong><span class="lang-zh">接口请求</span><span class="lang-en">HTTP client</span></div>
-        <div class="tech-item"><strong>json</strong><span class="lang-zh">数据解析</span><span class="lang-en">Data parsing</span></div>
-        <div class="tech-item"><strong>csv</strong><span class="lang-zh">CSV 保存</span><span class="lang-en">CSV export</span></div>
-        <div class="tech-item"><strong>logging</strong><span class="lang-zh">日志记录</span><span class="lang-en">Activity log</span></div>
-    </div>
-</div>
-
-<!-- ═══════════ 授权规则 ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">🔐</span> 授权规则</span>
-        <span class="lang-en"><span class="icon">🔐</span> License</span>
-    </h2>
-    <ul style="padding-left:1.2rem;line-height:2;list-style:none;">
-        <li class="lang-zh">🔑 一机一码机制，一个卡密仅支持一台电脑使用</li>
-        <li class="lang-en">🔑 One license per device — each key works on a single computer</li>
-        <li class="lang-zh">🚫 一台电脑仅允许运行一个软件实例，不支持多开</li>
-        <li class="lang-en">🚫 Single instance only — no multi-launch on the same computer</li>
-        <li class="lang-zh">🔄 软件由作者长期维护，后续版本通过 <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">GitHub Releases</a> 发布</li>
-        <li class="lang-en">🔄 Actively maintained — new versions released via <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">GitHub Releases</a></li>
-    </ul>
-</div>
-
-<!-- ═══════════ FAQ ═══════════ -->
-<div class="section">
-    <h2>
-        <span class="lang-zh"><span class="icon">❓</span> 常见问题</span>
-        <span class="lang-en"><span class="icon">❓</span> FAQ</span>
-    </h2>
-
-    <div class="faq-item lang-zh">
-        <div class="faq-q">🟢 是否需要安装 Python？</div>
-        <div class="faq-a">不需要。软件已打包为桌面客户端，下载对应系统版本后即可运行。</div>
-    </div>
-    <div class="faq-item lang-en">
-        <div class="faq-q">🟢 Do I need to install Python?</div>
-        <div class="faq-a">No. The software is packaged as a standalone desktop app — just download and run.</div>
-    </div>
-
-    <div class="faq-item lang-zh">
-        <div class="faq-q">🟢 Cookie 如何获取？需要手动抓包吗？</div>
-        <div class="faq-a">不需要手动抓包。软件内置了 Cookie 小工具，一键获取快手 Cookie，简单快捷。</div>
-    </div>
-    <div class="faq-item lang-en">
-        <div class="faq-q">🟢 How do I get the Cookie? Do I need manual packet capture?</div>
-        <div class="faq-a">No manual capture needed. The software has a built-in Cookie Tool — get Kuaishou cookies with one click.</div>
-    </div>
-
-    <div class="faq-item lang-zh">
-        <div class="faq-q">🟢 采集中断后数据会丢失吗？</div>
-        <div class="faq-a">不会。软件在采集过程中持续保存结果，网络异常或任务中断不会丢失已采集的数据。</div>
-    </div>
-    <div class="faq-item lang-en">
-        <div class="faq-q">🟢 Will I lose data if crawling is interrupted?</div>
-        <div class="faq-a">No. Results are saved continuously — network issues or interruptions won't wipe collected data.</div>
-    </div>
-
-    <div class="faq-item lang-zh">
-        <div class="faq-q">🟢 支持导出哪些格式？</div>
-        <div class="faq-a">支持导出 CSV 格式，可用 Excel / WPS / Numbers 直接打开查看和分析。</div>
-    </div>
-    <div class="faq-item lang-en">
-        <div class="faq-q">🟢 What export formats are supported?</div>
-        <div class="faq-a">CSV format is supported. Open directly in Excel / WPS / Numbers for viewing and analysis.</div>
-    </div>
-</div>
-
-<!-- ═══════════ 底部 CTA ═══════════ -->
-<div class="footer-cta">
-    <h3 class="lang-zh">🎬 准备好开始了吗？</h3>
-    <h3 class="lang-en">🎬 Ready to get started?</h3>
-    <p class="lang-zh">日卡仅需 ¥39，立即体验快手数据聚合采集</p>
-    <p class="lang-en">Start at just ¥39/day — try Kuaishou data crawling today</p>
-    <a href="https://mgnb.pro/product/kuaishou" target="_blank">
-        <span class="lang-zh">💰 立即开通使用</span>
-        <span class="lang-en">💰 Get Started Now</span>
-    </a>
-</div>
-
-<!-- ═══════════ Footer ═══════════ -->
-<div class="site-footer">
-    <p>© 2026 马哥python说 · Powered by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a></p>
-    <p style="margin-top:.3rem;">
-        <a href="https://github.com/mashukui/kuaishou_one_spider" target="_blank">
-            <span class="lang-zh">GitHub 仓库</span><span class="lang-en">GitHub Repo</span>
-        </a> ·
-        <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">
-            <span class="lang-zh">版本下载</span><span class="lang-en">Releases</span>
-        </a> ·
-        <a href="https://www.bilibili.com/video/BV1psRfBkEot/" target="_blank">
-            <span class="lang-zh">B站演示</span><span class="lang-en">Bilibili Demo</span>
-        </a> ·
-        <a href="https://mgnb.pro/product/kuaishou" target="_blank">
-            <span class="lang-zh">开通使用</span><span class="lang-en">Purchase</span>
-        </a>
-    </p>
-</div>
-
-</div>
-
-<script>
-var currentSlide = 0;
-var totalSlides = 9;
-var track = document.getElementById('carouselTrack');
-var dots = document.querySelectorAll('.carousel-dot');
-var caption = document.getElementById('carouselCaption');
-var autoTimer;
-var captions = [
-    { zh: '📌 关键词作品与评论采集界面', en: '📌 Keyword search & comment crawl interface' },
-    { zh: '🔍 搜索作品结果展示', en: '🔍 Search results for posts' },
-    { zh: '💬 评论采集结果', en: '💬 Comment crawl results' },
-    { zh: '📋 作品详情采集界面', en: '📋 Post detail scraping interface' },
-    { zh: '📊 作品详情采集结果', en: '📊 Post detail scrape results' },
-    { zh: '📥 下载视频文件', en: '📥 Video file download' },
-    { zh: '🏠 主页作品采集界面', en: '🏠 Profile post scraping interface' },
-    { zh: '📈 主页作品采集结果', en: '📈 Profile post scrape results' },
-    { zh: '🎬 主页视频文件', en: '🎬 Profile video files' }
-];
-
-function updateCarousel() {
-    track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
-    dots.forEach(function(d, i) { d.classList.toggle('active', i === currentSlide); });
-    var lang = document.documentElement.getAttribute('lang') === 'en' ? 'en' : 'zh';
-    caption.textContent = captions[currentSlide][lang];
-}
-function moveSlide(dir) {
-    currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
-    updateCarousel();
-    resetAuto();
-}
-function goToSlide(n) {
-    currentSlide = n;
-    updateCarousel();
-    resetAuto();
-}
-function resetAuto() {
-    clearInterval(autoTimer);
-    autoTimer = setInterval(function() { moveSlide(1); }, 5000);
-}
-var touchStartX = 0;
-track.addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
-track.addEventListener('touchend', function(e) {
-    var diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) moveSlide(diff > 0 ? 1 : -1);
-});
-autoTimer = setInterval(function() { moveSlide(1); }, 5000);
-
-function switchLang(lang) {
-    document.documentElement.setAttribute('lang', lang);
-    document.querySelectorAll('.lang-btn').forEach(function(btn) {
-        btn.classList.toggle('active',
-            btn.textContent.trim() === (lang === 'zh-CN' ? '中文' : 'EN'));
-    });
-    updateCarousel();
-    // save preference
-    try { localStorage.setItem('kuaishou-spider-lang', lang); } catch(e) {}
-}
-// load saved preference, default to zh-CN
-(function() {
-    var saved = 'zh-CN';
-    try { saved = localStorage.getItem('kuaishou-spider-lang') || 'zh-CN'; } catch(e) {}
-    switchLang(saved);
-})();
-</script>
-
+  <footer class="footer">
+    <span>© 2026 马哥python说 · Powered by GitHub Pages</span>
+    <span>
+      <a href="https://github.com/mashukui/kuaishou_one_spider" target="_blank" rel="noopener">GitHub 仓库</a>
+      <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank" rel="noopener">版本下载</a>
+      <a href="https://www.bilibili.com/video/BV1psRfBkEot/" target="_blank" rel="noopener">使用演示</a>
+      <a href="https://mgnb.pro/product/kuaishou" target="_blank" rel="noopener">开通使用</a>
+    </span>
+  </footer>
 </body>
 </html>
