@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快手聚合采集 - Kuaishou Crawler</title>
+    <style>
+        :root {
+            --red: #ff6b00;
+            --dark: #1a1a2e;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #333333;
+            --muted: #666666;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* ── Language Switcher ── */
+        .lang-switcher {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,.85);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.12);
+        }
+        .lang-btn {
+            border: none;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: var(--muted);
+            transition: all .2s;
+            font-family: inherit;
+        }
+        .lang-btn.active {
+            background: var(--red);
+            color: #fff;
+        }
+        .lang-btn:hover:not(.active) {
+            background: #fff3e8;
+            color: var(--red);
+        }
+
+        /* ── Language visibility ── */
+        html[lang="zh-CN"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-zh { display: none !important; }
+
+        /* ── Hero ── */
+        .hero {
+            background: linear-gradient(135deg, #e65c00 0%, #ff6b00 50%, #ff8c42 100%);
+            color: #fff;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            opacity: .92;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .hero .badges {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        .hero .badge {
+            background: rgba(255,255,255,.2);
+            backdrop-filter: blur(6px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: .9rem;
+        }
+        .hero .cta-btn {
+            display: inline-block;
+            margin-top: 1.8rem;
+            background: #fff;
+            color: var(--red);
+            padding: 14px 48px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+            transition: transform .15s, box-shadow .15s;
+        }
+        .hero .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,.2);
+        }
+        .hero .cta-sub {
+            display: block;
+            margin-top: .5rem;
+            font-size: .85rem;
+            opacity: .75;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Container ── */
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3rem;
+        }
+
+        /* ── Section ── */
+        .section {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06);
+        }
+        .section h2 {
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        .section h2 .icon { font-size: 1.3rem; }
+
+        /* ── Feature Grid ── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        .feature-card {
+            background: #fafafa;
+            padding: 1.2rem;
+            border-radius: 10px;
+            border-left: 3px solid var(--red);
+        }
+        .feature-card h3 { font-size: 1rem; margin-bottom: .4rem; }
+        .feature-card p { font-size: .9rem; color: var(--muted); }
+
+        /* ── Steps ── */
+        .steps { counter-reset: step; }
+        .step {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: .8rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .step:last-child { border-bottom: none; }
+        .step-num {
+            counter-increment: step;
+            background: var(--red);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: .9rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .step-body h4 { font-size: 1rem; margin-bottom: .2rem; }
+        .step-body p { color: var(--muted); font-size: .9rem; }
+        .step-body a { color: var(--red); }
+
+        /* ── Carousel ── */
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #1a1a2e;
+        }
+        .carousel-track {
+            display: flex;
+            align-items: flex-start;
+            transition: transform .4s ease;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            position: relative;
+            line-height: 0;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,.75));
+            color: #fff;
+            padding: 2rem 1.5rem 1.2rem;
+            font-size: .95rem;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,.85);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: background .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        }
+        .carousel-btn:hover { background: #fff; }
+        .carousel-prev { left: 1rem; }
+        .carousel-next { right: 1rem; }
+        .carousel-dots {
+            position: absolute;
+            bottom: 3.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: .5rem;
+            z-index: 10;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 1rem;
+        }
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.4);
+            border: none;
+            cursor: pointer;
+            transition: background .2s;
+            padding: 0;
+        }
+        .carousel-dot.active { background: #fff; }
+
+        /* ── Price Table ── */
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: .8rem;
+        }
+        .price-card {
+            background: #fafafa;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: border-color .2s;
+        }
+        .price-card:hover { border-color: var(--red); }
+        .price-card.featured {
+            border-color: var(--red);
+            background: #fff8f3;
+        }
+        .price-card .name { font-weight: 700; font-size: 1.1rem; margin-bottom: .3rem; }
+        .price-card .duration { font-size: .8rem; color: var(--muted); margin-bottom: .8rem; }
+        .price-card .money { font-size: 1.6rem; font-weight: 800; color: var(--red); }
+        .price-card .money span { font-size: .8rem; font-weight: 400; }
+        .price-card .scene { font-size: .8rem; color: var(--muted); margin-top: .5rem; }
+
+        /* ── FAQ ── */
+        .faq-item {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            margin-bottom: .8rem;
+            overflow: hidden;
+        }
+        .faq-q {
+            background: #fafafa;
+            padding: 1rem 1.2rem;
+            font-weight: 600;
+            font-size: .95rem;
+            cursor: default;
+            user-select: none;
+        }
+        .faq-a {
+            padding: 1rem 1.2rem;
+            font-size: .9rem;
+            color: var(--muted);
+            border-top: 1px solid #eee;
+        }
+
+        /* ── Tech Table ── */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: .6rem;
+        }
+        .tech-item {
+            background: #fafafa;
+            padding: .7rem 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: .85rem;
+        }
+        .tech-item strong { display: block; font-size: .95rem; margin-bottom: .1rem; }
+
+        /* ── Footer CTA ── */
+        .footer-cta {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d44);
+            color: #fff;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 2rem;
+            border-radius: 12px;
+        }
+        .footer-cta h3 { font-size: 1.4rem; margin-bottom: .5rem; }
+        .footer-cta p { opacity: .8; margin-bottom: 1.5rem; }
+        .footer-cta a {
+            display: inline-block;
+            background: var(--red);
+            color: #fff;
+            padding: 14px 48px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: transform .15s;
+        }
+        .footer-cta a:hover { transform: scale(1.03); }
+
+        /* ── Footer ── */
+        .site-footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #aaa;
+            font-size: .85rem;
+        }
+        .site-footer a { color: #999; text-decoration: none; }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 1.7rem; }
+            .section { padding: 1.2rem; }
+            .price-grid { grid-template-columns: 1fr 1fr; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .carousel-dots { bottom: 2.8rem; gap: .35rem; }
+            .carousel-dot { width: 8px; height: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════ Language Switcher ═══════════ -->
+<div class="lang-switcher">
+    <button class="lang-btn active" onclick="switchLang('zh-CN')">中文</button>
+    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+</div>
+
+<!-- ═══════════ HERO ═══════════ -->
+<header class="hero">
+
+    <h1 class="lang-zh">🎬 快手聚合采集</h1>
+    <h1 class="lang-en">🎬 Kuaishou Crawler</h1>
+
+    <p class="lang-zh">关键词作品采集·评论采集·作品详情采集·主页作品采集·视频下载·CSV导出，GUI开箱即用</p>
+    <p class="lang-en">Keyword search · Comment crawling · Post details · Profile scraping · Video download · CSV export — GUI, ready to use</p>
+
+    <div class="badges lang-zh">
+        <span class="badge">🖥️ Windows + macOS</span>
+        <span class="badge">🚀 无需 Python 环境</span>
+        <span class="badge">🍪 内置Cookie工具</span>
+        <span class="badge">📦 开箱即用</span>
+    </div>
+    <div class="badges lang-en">
+        <span class="badge">🖥️ Windows + macOS</span>
+        <span class="badge">🚀 No Python required</span>
+        <span class="badge">🍪 Built-in Cookie tool</span>
+        <span class="badge">📦 Ready to use</span>
+    </div>
+
+    <a class="cta-btn" href="https://mgnb.pro/product/kuaishou" target="_blank">
+        <span class="lang-zh">💰 立即开通使用</span>
+        <span class="lang-en">💰 Get Started Now</span>
+    </a>
+    <span class="cta-sub lang-zh">日卡 ¥39 起 · 一机一码 · 持续更新维护</span>
+    <span class="cta-sub lang-en">Starting at ¥39/day · One device per license · Actively maintained</span>
+</header>
+
+<div class="container">
+
+<!-- ═══════════ 简介 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">👋</span> 软件简介</span>
+        <span class="lang-en"><span class="icon">👋</span> Overview</span>
+    </h2>
+    <p class="lang-zh">
+        <strong>kuaishou_one_spider</strong> 是一款面向快手平台数据采集场景的桌面 GUI 工具。
+        支持按关键词搜索作品、采集作品评论、获取作品详情信息、采集主页作品列表，
+        并提供视频下载和 CSV 数据导出功能。用户无需配置 Python 环境，下载客户端后登录即可使用。
+    </p>
+    <p class="lang-en">
+        <strong>kuaishou_one_spider</strong> is a desktop GUI tool for Kuaishou platform data collection.
+        Search posts by keyword, crawl comments, fetch post details, scrape profile post lists,
+        download videos, and export data as CSV. No Python setup required — just download and run.
+    </p>
+</div>
+
+<!-- ═══════════ 适用场景 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">🎯</span> 适用场景</span>
+        <span class="lang-en"><span class="icon">🎯</span> Use Cases</span>
+    </h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3><span class="lang-zh">🎣 获客截流</span><span class="lang-en">🎣 Lead Generation</span></h3>
+            <p class="lang-zh">通过关键词采集目标用户作品和评论，精准获取潜在客户</p>
+            <p class="lang-en">Target users by keyword scraping their posts and comments for lead generation</p>
+        </div>
+        <div class="feature-card">
+            <h3><span class="lang-zh">📊 舆情分析</span><span class="lang-en">📊 Sentiment Analysis</span></h3>
+            <p class="lang-zh">采集品牌或话题相关评论，观察舆论趋势和用户态度</p>
+            <p class="lang-en">Track brand or topic discussions and user sentiment trends</p>
+        </div>
+        <div class="feature-card">
+            <h3><span class="lang-zh">🎬 内容创作</span><span class="lang-en">🎬 Content Creation</span></h3>
+            <p class="lang-zh">分析热门作品数据和评论区高频话题，辅助选题创作</p>
+            <p class="lang-en">Analyze trending post data and hot comment topics to guide content strategy</p>
+        </div>
+        <div class="feature-card">
+            <h3><span class="lang-zh">📱 快手运营</span><span class="lang-en">📱 Kuaishou Ops</span></h3>
+            <p class="lang-zh">批量采集竞品或同行的作品数据，辅助账号运营决策</p>
+            <p class="lang-en">Batch-scrape competitor post data to support account operations</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ 功能概览 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">⚙️</span> 功能概览</span>
+        <span class="lang-en"><span class="icon">⚙️</span> Features</span>
+    </h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>✅ <span class="lang-zh">关键词作品采集</span><span class="lang-en">Keyword Post Search</span></h3>
+            <p class="lang-zh">按关键词搜索快手作品，批量采集搜索结果</p>
+            <p class="lang-en">Search Kuaishou posts by keywords and batch collect results</p>
+        </div>
+        <div class="feature-card">
+            <h3>✅ <span class="lang-zh">评论采集</span><span class="lang-en">Comment Crawling</span></h3>
+            <p class="lang-zh">采集指定作品的评论数据，支持子评论展开</p>
+            <p class="lang-en">Crawl comments for specific posts, including nested replies</p>
+        </div>
+        <div class="feature-card">
+            <h3>✅ <span class="lang-zh">作品详情采集</span><span class="lang-en">Post Detail Scraping</span></h3>
+            <p class="lang-zh">获取作品详细信息：播放量、点赞、评论数等</p>
+            <p class="lang-en">Fetch post details: view count, likes, comments, etc.</p>
+        </div>
+        <div class="feature-card">
+            <h3>✅ <span class="lang-zh">主页作品采集</span><span class="lang-en">Profile Post Scraping</span></h3>
+            <p class="lang-zh">批量采集目标用户主页的全部公开作品</p>
+            <p class="lang-en">Batch-scrape all public posts from a user's profile</p>
+        </div>
+        <div class="feature-card">
+            <h3>✅ <span class="lang-zh">链接uid转换</span><span class="lang-en">Link/UID Conversion</span></h3>
+            <p class="lang-zh">支持快手链接与用户 UID 互转，灵活输入</p>
+            <p class="lang-en">Convert between Kuaishou share links and user UIDs</p>
+        </div>
+        <div class="feature-card">
+            <h3>✅ <span class="lang-zh">自动保存</span><span class="lang-en">Auto-save</span></h3>
+            <p class="lang-zh">采集过程中持续保存，降低中断丢数风险</p>
+            <p class="lang-en">Continuous saving during crawling to prevent data loss</p>
+        </div>
+        <div class="feature-card">
+            <h3>✅ <span class="lang-zh">运行日志</span><span class="lang-en">Activity Log</span></h3>
+            <p class="lang-zh">自动记录运行过程，方便事后排查问题</p>
+            <p class="lang-en">Detailed logs for troubleshooting</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ 快速开始 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">🚀</span> 快速开始</span>
+        <span class="lang-en"><span class="icon">🚀</span> Quick Start</span>
+    </h2>
+    <div class="steps lang-zh">
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>下载软件</h4><p>前往 <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">GitHub Releases</a> 下载最新版客户端</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>解压运行</h4><p>解压后双击运行对应系统的客户端（Windows 或 macOS）</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>获取Cookie</h4><p>使用软件内置的 <strong>Cookie小工具</strong> 一键获取快手 Cookie，无需手动抓包</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>登录账号</h4><p>使用购买后获得的卡密登录软件</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>输入目标</h4><p>输入搜索关键词 / 快手链接 / 用户 UID，选择采集模式</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>开始采集</h4><p>点击「开始执行」，等待采集完成</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>查看结果</h4><p>在软件所在目录查看 CSV 结果文件和运行日志</p></div></div>
+    </div>
+    <div class="steps lang-en">
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Download</h4><p>Get the latest release from <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">GitHub Releases</a></p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Extract & Run</h4><p>Unzip and launch the client for your OS (Windows or macOS)</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Get Cookie</h4><p>Use the built-in <strong>Cookie Tool</strong> to obtain Kuaishou cookies with one click — no manual packet capture needed</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Login</h4><p>Log in using the license key from your purchase</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Add Target</h4><p>Enter keywords, Kuaishou links, or user UIDs — choose crawl mode</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>Start Crawling</h4><p>Click "Start" and wait for the crawl to complete</p></div></div>
+        <div class="step"><div class="step-num"></div><div class="step-body"><h4>View Results</h4><p>Open CSV files and logs in the app directory</p></div></div>
+    </div>
+</div>
+
+<!-- ═══════════ 截图展示 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">🖼️</span> 功能展示</span>
+        <span class="lang-en"><span class="icon">🖼️</span> Screenshots</span>
+    </h2>
+    <div class="carousel" id="carousel">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/13464ab4-bbab-4f23-8de0-c54a298496f0.jpg" alt="关键词作品与评论采集界面">
+                <div class="carousel-caption lang-zh">📌 关键词作品与评论采集界面</div>
+                <div class="carousel-caption lang-en">📌 Keyword search & comment crawl interface</div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/47514426-3972-4d2b-8f44-06321074ca95.png" alt="搜索作品结果">
+                <div class="carousel-caption lang-zh">🔍 搜索作品结果展示</div>
+                <div class="carousel-caption lang-en">🔍 Search results for posts</div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/3da2ce78-8520-4516-9d96-5762cd681a1b.png" alt="评论采集结果">
+                <div class="carousel-caption lang-zh">💬 评论采集结果</div>
+                <div class="carousel-caption lang-en">💬 Comment crawl results</div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/67a28f32-d288-43c2-9107-c01ebc53fbbb.jpg" alt="作品详情采集界面">
+                <div class="carousel-caption lang-zh">📋 作品详情采集界面</div>
+                <div class="carousel-caption lang-en">📋 Post detail scraping interface</div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/7f6b8bc9-d409-4f25-aa60-ab62b74cf7df.png" alt="作品详情采集结果">
+                <div class="carousel-caption lang-zh">📊 作品详情采集结果</div>
+                <div class="carousel-caption lang-en">📊 Post detail scrape results</div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/bbdd074e-7ffa-4d2a-94ab-2133544ee26b.png" alt="下载视频文件">
+                <div class="carousel-caption lang-zh">📥 下载视频文件</div>
+                <div class="carousel-caption lang-en">📥 Video file download</div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/f604b457-bf2a-42ae-b412-9518c2cb5d39.jpg" alt="主页作品采集界面">
+                <div class="carousel-caption lang-zh">🏠 主页作品采集界面</div>
+                <div class="carousel-caption lang-en">🏠 Profile post scraping interface</div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/1bd49107-b206-4de2-9164-c51c9557fce6.png" alt="主页作品采集结果">
+                <div class="carousel-caption lang-zh">📈 主页作品采集结果</div>
+                <div class="carousel-caption lang-en">📈 Profile post scrape results</div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://files.mdnice.com/user/32110/815900e6-6fc0-4891-ac10-f0e5ec20b298.png" alt="主页视频文件">
+                <div class="carousel-caption lang-zh">🎬 主页视频文件</div>
+                <div class="carousel-caption lang-en">🎬 Profile video files</div>
+            </div>
+        </div>
+        <button class="carousel-btn carousel-prev" onclick="moveSlide(-1)">◀</button>
+        <button class="carousel-btn carousel-next" onclick="moveSlide(1)">▶</button>
+        <div class="carousel-dots" id="carouselDots">
+            <button class="carousel-dot active" onclick="goToSlide(0)"></button>
+            <button class="carousel-dot" onclick="goToSlide(1)"></button>
+            <button class="carousel-dot" onclick="goToSlide(2)"></button>
+            <button class="carousel-dot" onclick="goToSlide(3)"></button>
+            <button class="carousel-dot" onclick="goToSlide(4)"></button>
+            <button class="carousel-dot" onclick="goToSlide(5)"></button>
+            <button class="carousel-dot" onclick="goToSlide(6)"></button>
+            <button class="carousel-dot" onclick="goToSlide(7)"></button>
+            <button class="carousel-dot" onclick="goToSlide(8)"></button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ 输出字段 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">📊</span> 输出数据说明</span>
+        <span class="lang-en"><span class="icon">📊</span> Output Fields</span>
+    </h2>
+    <p class="lang-zh" style="margin-bottom:1rem;">采集完成后生成结构化 CSV 文件，以下为各采集模式的输出字段：</p>
+    <p class="lang-en" style="margin-bottom:1rem;">After crawling, structured CSV files are generated with the following fields per mode:</p>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3><span class="lang-zh">🔍 搜索作品</span><span class="lang-en">🔍 Search Posts</span></h3>
+            <p class="lang-zh">作品ID、标题、作者、播放量、点赞数、发布时间、作品链接</p>
+            <p class="lang-en">Post ID, title, author, views, likes, publish time, post URL</p>
+        </div>
+        <div class="feature-card">
+            <h3><span class="lang-zh">💬 评论</span><span class="lang-en">💬 Comments</span></h3>
+            <p class="lang-zh">评论ID、评论内容、评论者、点赞数、回复数、评论时间</p>
+            <p class="lang-en">Comment ID, content, author, likes, reply count, timestamp</p>
+        </div>
+        <div class="feature-card">
+            <h3><span class="lang-zh">📋 作品详情</span><span class="lang-en">📋 Post Details</span></h3>
+            <p class="lang-zh">作品ID、标题、描述、播放量、点赞、评论数、收藏、分享数</p>
+            <p class="lang-en">Post ID, title, description, views, likes, comments, favorites, shares</p>
+        </div>
+        <div class="feature-card">
+            <h3><span class="lang-zh">🏠 主页作品</span><span class="lang-en">🏠 Profile Posts</span></h3>
+            <p class="lang-zh">用户UID/昵称、作品ID、标题、播放量、点赞数、发布时间</p>
+            <p class="lang-en">User UID/name, post ID, title, views, likes, publish time</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ 价格 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">💰</span> 价格说明</span>
+        <span class="lang-en"><span class="icon">💰</span> Pricing</span>
+    </h2>
+    <div class="price-grid">
+        <div class="price-card">
+            <div class="name lang-zh">日卡</div><div class="name lang-en">Daily</div>
+            <div class="duration lang-zh">使用期限 1 天</div><div class="duration lang-en">1 day</div>
+            <div class="money">¥39</div>
+            <div class="scene lang-zh">临时试用、小批量任务</div>
+            <div class="scene lang-en">Trial / small tasks</div>
+        </div>
+        <div class="price-card featured">
+            <div class="name lang-zh">月卡</div><div class="name lang-en">Monthly</div>
+            <div class="duration lang-zh">使用期限 1 个月</div><div class="duration lang-en">1 month</div>
+            <div class="money">¥149</div>
+            <div class="scene lang-zh">⭐ 短期采集需求</div>
+            <div class="scene lang-en">⭐ Short-term needs</div>
+        </div>
+        <div class="price-card">
+            <div class="name lang-zh">季卡</div><div class="name lang-en">Quarterly</div>
+            <div class="duration lang-zh">使用期限 3 个月</div><div class="duration lang-en">3 months</div>
+            <div class="money">¥399</div>
+            <div class="scene lang-zh">中期采集需求</div>
+            <div class="scene lang-en">Medium-term needs</div>
+        </div>
+        <div class="price-card">
+            <div class="name lang-zh">年卡</div><div class="name lang-en">Yearly</div>
+            <div class="duration lang-zh">使用期限 1 年</div><div class="duration lang-en">1 year</div>
+            <div class="money">¥799</div>
+            <div class="scene lang-zh">长期稳定使用</div>
+            <div class="scene lang-en">Long-term use</div>
+        </div>
+    </div>
+    <p style="text-align:center;margin-top:1.2rem;">
+        <a href="https://mgnb.pro/product/kuaishou" target="_blank" style="color:var(--red);font-weight:600;">
+            <span class="lang-zh">👉 立即开通</span>
+            <span class="lang-en">👉 Purchase Now</span>
+        </a>
+    </p>
+</div>
+
+<!-- ═══════════ 技术说明 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">🛠️</span> 技术说明</span>
+        <span class="lang-en"><span class="icon">🛠️</span> Tech Stack</span>
+    </h2>
+    <p class="lang-zh" style="margin-bottom:1rem;">采用 Python 开发，通过快手接口请求采集数据：</p>
+    <p class="lang-en" style="margin-bottom:1rem;">Built with Python. Data is fetched via Kuaishou APIs:</p>
+    <div class="tech-grid">
+        <div class="tech-item"><strong>tkinter</strong><span class="lang-zh">GUI 界面</span><span class="lang-en">GUI</span></div>
+        <div class="tech-item"><strong>requests</strong><span class="lang-zh">接口请求</span><span class="lang-en">HTTP client</span></div>
+        <div class="tech-item"><strong>json</strong><span class="lang-zh">数据解析</span><span class="lang-en">Data parsing</span></div>
+        <div class="tech-item"><strong>csv</strong><span class="lang-zh">CSV 保存</span><span class="lang-en">CSV export</span></div>
+        <div class="tech-item"><strong>logging</strong><span class="lang-zh">日志记录</span><span class="lang-en">Activity log</span></div>
+    </div>
+</div>
+
+<!-- ═══════════ 授权规则 ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">🔐</span> 授权规则</span>
+        <span class="lang-en"><span class="icon">🔐</span> License</span>
+    </h2>
+    <ul style="padding-left:1.2rem;line-height:2;list-style:none;">
+        <li class="lang-zh">🔑 一机一码机制，一个卡密仅支持一台电脑使用</li>
+        <li class="lang-en">🔑 One license per device — each key works on a single computer</li>
+        <li class="lang-zh">🚫 一台电脑仅允许运行一个软件实例，不支持多开</li>
+        <li class="lang-en">🚫 Single instance only — no multi-launch on the same computer</li>
+        <li class="lang-zh">🔄 软件由作者长期维护，后续版本通过 <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">GitHub Releases</a> 发布</li>
+        <li class="lang-en">🔄 Actively maintained — new versions released via <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">GitHub Releases</a></li>
+    </ul>
+</div>
+
+<!-- ═══════════ FAQ ═══════════ -->
+<div class="section">
+    <h2>
+        <span class="lang-zh"><span class="icon">❓</span> 常见问题</span>
+        <span class="lang-en"><span class="icon">❓</span> FAQ</span>
+    </h2>
+
+    <div class="faq-item lang-zh">
+        <div class="faq-q">🟢 是否需要安装 Python？</div>
+        <div class="faq-a">不需要。软件已打包为桌面客户端，下载对应系统版本后即可运行。</div>
+    </div>
+    <div class="faq-item lang-en">
+        <div class="faq-q">🟢 Do I need to install Python?</div>
+        <div class="faq-a">No. The software is packaged as a standalone desktop app — just download and run.</div>
+    </div>
+
+    <div class="faq-item lang-zh">
+        <div class="faq-q">🟢 Cookie 如何获取？需要手动抓包吗？</div>
+        <div class="faq-a">不需要手动抓包。软件内置了 Cookie 小工具，一键获取快手 Cookie，简单快捷。</div>
+    </div>
+    <div class="faq-item lang-en">
+        <div class="faq-q">🟢 How do I get the Cookie? Do I need manual packet capture?</div>
+        <div class="faq-a">No manual capture needed. The software has a built-in Cookie Tool — get Kuaishou cookies with one click.</div>
+    </div>
+
+    <div class="faq-item lang-zh">
+        <div class="faq-q">🟢 采集中断后数据会丢失吗？</div>
+        <div class="faq-a">不会。软件在采集过程中持续保存结果，网络异常或任务中断不会丢失已采集的数据。</div>
+    </div>
+    <div class="faq-item lang-en">
+        <div class="faq-q">🟢 Will I lose data if crawling is interrupted?</div>
+        <div class="faq-a">No. Results are saved continuously — network issues or interruptions won't wipe collected data.</div>
+    </div>
+
+    <div class="faq-item lang-zh">
+        <div class="faq-q">🟢 支持导出哪些格式？</div>
+        <div class="faq-a">支持导出 CSV 格式，可用 Excel / WPS / Numbers 直接打开查看和分析。</div>
+    </div>
+    <div class="faq-item lang-en">
+        <div class="faq-q">🟢 What export formats are supported?</div>
+        <div class="faq-a">CSV format is supported. Open directly in Excel / WPS / Numbers for viewing and analysis.</div>
+    </div>
+</div>
+
+<!-- ═══════════ 底部 CTA ═══════════ -->
+<div class="footer-cta">
+    <h3 class="lang-zh">🎬 准备好开始了吗？</h3>
+    <h3 class="lang-en">🎬 Ready to get started?</h3>
+    <p class="lang-zh">日卡仅需 ¥39，立即体验快手数据聚合采集</p>
+    <p class="lang-en">Start at just ¥39/day — try Kuaishou data crawling today</p>
+    <a href="https://mgnb.pro/product/kuaishou" target="_blank">
+        <span class="lang-zh">💰 立即开通使用</span>
+        <span class="lang-en">💰 Get Started Now</span>
+    </a>
+</div>
+
+<!-- ═══════════ Footer ═══════════ -->
+<div class="site-footer">
+    <p>© 2026 马哥python说 · Powered by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a></p>
+    <p style="margin-top:.3rem;">
+        <a href="https://github.com/mashukui/kuaishou_one_spider" target="_blank">
+            <span class="lang-zh">GitHub 仓库</span><span class="lang-en">GitHub Repo</span>
+        </a> ·
+        <a href="https://github.com/mashukui/kuaishou_one_spider/releases/" target="_blank">
+            <span class="lang-zh">版本下载</span><span class="lang-en">Releases</span>
+        </a> ·
+        <a href="https://www.bilibili.com/video/BV1psRfBkEot/" target="_blank">
+            <span class="lang-zh">B站演示</span><span class="lang-en">Bilibili Demo</span>
+        </a> ·
+        <a href="https://mgnb.pro/product/kuaishou" target="_blank">
+            <span class="lang-zh">开通使用</span><span class="lang-en">Purchase</span>
+        </a>
+    </p>
+</div>
+
+</div>
+
+<script>
+var currentSlide = 0;
+var totalSlides = 9;
+var track = document.getElementById('carouselTrack');
+var dots = document.querySelectorAll('.carousel-dot');
+var autoTimer;
+
+function updateCarousel() {
+    track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === currentSlide); });
+}
+function moveSlide(dir) {
+    currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
+    updateCarousel();
+    resetAuto();
+}
+function goToSlide(n) {
+    currentSlide = n;
+    updateCarousel();
+    resetAuto();
+}
+function resetAuto() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(function() { moveSlide(1); }, 5000);
+}
+var touchStartX = 0;
+track.addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
+track.addEventListener('touchend', function(e) {
+    var diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) moveSlide(diff > 0 ? 1 : -1);
+});
+autoTimer = setInterval(function() { moveSlide(1); }, 5000);
+
+function switchLang(lang) {
+    document.documentElement.setAttribute('lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.classList.toggle('active',
+            btn.textContent.trim() === (lang === 'zh-CN' ? '中文' : 'EN'));
+    });
+    // save preference
+    try { localStorage.setItem('kuaishou-spider-lang', lang); } catch(e) {}
+}
+// load saved preference, default to zh-CN
+(function() {
+    var saved = 'zh-CN';
+    try { saved = localStorage.getItem('kuaishou-spider-lang') || 'zh-CN'; } catch(e) {}
+    switchLang(saved);
+})();
+</script>
+
+</body>
+</html>
