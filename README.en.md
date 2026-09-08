@@ -1,4 +1,10 @@
+<div align="center">
+
 # kuaishou_one_spider
+
+[![Release](https://img.shields.io/github/v/release/mashukui/kuaishou_one_spider?style=flat)](https://github.com/mashukui/kuaishou_one_spider/releases) [![Last Update](https://img.shields.io/github/release-date/mashukui/kuaishou_one_spider?style=flat)](https://github.com/mashukui/kuaishou_one_spider/releases) ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blue?style=flat)
+
+</div>
 
 > 🔥 Kuaishou data collection tool / Kuaishou crawler GUI, supporting keyword video collection, comment collection, video detail collection, creator profile video collection, video download, CSV export, and link conversion.
 >
@@ -40,7 +46,7 @@ It is suitable for the following scenarios:
 1. Open [Releases](https://github.com/mashukui/kuaishou_one_spider/releases/) and download the latest version.
 2. Extract the package and run the client for your operating system.
 3. Use the built-in cookie helper to configure your cookie.
-4. Log in to the software account.
+4. Log in to the software account (no account yet? [Day pass from 19 CNY, instant activation](#-pricing)).
 5. Select a collection module and enter a keyword, video link, or profile link.
 6. Click "Start" and wait for the collection task to finish.
 7. Check the CSV files, video files, and log files in the software directory.
@@ -58,63 +64,63 @@ It is suitable for the following scenarios:
 
 Keyword video and comment collection interface:
 
-![Keyword video and comment collection interface](https://files.mdnice.com/user/32110/13464ab4-bbab-4f23-8de0-c54a298496f0.jpg)
+![Keyword video and comment collection interface](docs/images/readme/ks_01.jpg)
 
 Search video result:
 
-![Search videos result](https://files.mdnice.com/user/32110/47514426-3972-4d2b-8f44-06321074ca95.png)
+![Search videos result](docs/images/readme/ks_02.png)
 
 Comment collection result:
 
-![Comments result](https://files.mdnice.com/user/32110/3da2ce78-8520-4516-9d96-5762cd681a1b.png)
+![Comments result](docs/images/readme/ks_03.png)
 
 ### Video Detail Collection
 
 Video detail collection interface:
 
-![Video detail collection interface](https://files.mdnice.com/user/32110/67a28f32-d288-43c2-9107-c01ebc53fbbb.jpg)
+![Video detail collection interface](docs/images/readme/ks_04.jpg)
 
 Video detail collection result:
 
-![Video detail result](https://files.mdnice.com/user/32110/7f6b8bc9-d409-4f25-aa60-ab62b74cf7df.png)
+![Video detail result](docs/images/readme/ks_05.png)
 
 Automatically downloaded video files:
 
-![Video detail downloaded files](https://files.mdnice.com/user/32110/bbdd074e-7ffa-4d2a-94ab-2133544ee26b.png)
+![Video detail downloaded files](docs/images/readme/ks_06.png)
 
 ### Creator Profile Video Collection
 
 Creator profile video collection interface:
 
-![Creator profile video collection interface](https://files.mdnice.com/user/32110/f604b457-bf2a-42ae-b412-9518c2cb5d39.jpg)
+![Creator profile video collection interface](docs/images/readme/ks_07.jpg)
 
 Creator profile video collection result:
 
-![Creator profile video result](https://files.mdnice.com/user/32110/1bd49107-b206-4de2-9164-c51c9557fce6.png)
+![Creator profile video result](docs/images/readme/ks_08.png)
 
 Automatically downloaded creator profile video files:
 
-![Creator profile video downloaded files](https://files.mdnice.com/user/32110/815900e6-6fc0-4891-ac10-f0e5ec20b298.png)
+![Creator profile video downloaded files](docs/images/readme/ks_09.png)
 
 ### Link and uid Conversion
 
 Convert a profile link to a Kuaishou ID:
 
-![Convert profile link to Kuaishou ID](https://files.mdnice.com/user/32110/4649de6f-36e0-4140-bfaa-e800117e81f3.jpg)
+![Convert profile link to Kuaishou ID](docs/images/readme/ks_10.jpg)
 
-![Profile link to Kuaishou ID result](https://files.mdnice.com/user/32110/1e9da0e4-1426-44ea-b377-308735ff2009.png)
+![Profile link to Kuaishou ID result](docs/images/readme/ks_11.png)
 
 Convert a Kuaishou ID to a profile link:
 
-![Convert Kuaishou ID to profile link](https://files.mdnice.com/user/32110/a2b7808a-3381-4ee6-82eb-5b6dc5bd1d2a.jpg)
+![Convert Kuaishou ID to profile link](docs/images/readme/ks_12.jpg)
 
-![Kuaishou ID to profile link result](https://files.mdnice.com/user/32110/7448e10e-a262-4386-9259-4ef0bd985110.png)
+![Kuaishou ID to profile link result](docs/images/readme/ks_13.png)
 
 Convert a mobile app video link to a PC video link:
 
-![Convert app video link to PC video link](https://files.mdnice.com/user/32110/3ae828eb-9afc-4dd7-a107-a8b507b4b909.jpg)
+![Convert app video link to PC video link](docs/images/readme/ks_14.jpg)
 
-![App video link to PC video link result](https://files.mdnice.com/user/32110/f8b59751-21a1-4874-9535-1e1fe126fcfa.png)
+![App video link to PC video link result](docs/images/readme/ks_15.png)
 
 ## 📊 Output Fields
 
@@ -182,12 +188,12 @@ The software is developed in Python. Core modules include:
 | Module | Purpose |
 | --- | --- |
 | tkinter | GUI interface |
-| requests | API requests |
+| playwright | Browser automation (real browser environment) |
 | json | Response parsing |
 | pandas | CSV export |
 | logging | Runtime logging |
 
-The software collects data through interface requests and does not rely on browser automation or RPA-style operations. During collection, results are saved by page by default. The request interval is usually about 1-2 seconds, which helps control the collection pace and reduce data loss caused by unexpected interruptions.
+The software collects data through a real browser environment driven by Playwright. During collection, results are saved by page by default. The interval between pages is usually about 1-2 seconds, which helps control the collection pace and reduce data loss caused by unexpected interruptions.
 
 ## 💰 Pricing
 
@@ -202,11 +208,28 @@ Purchase page: [https://mgnb.pro/product/kuaishou](https://mgnb.pro/product/kuai
 
 ## 🔐 License and Activation Rules
 
-- The software uses a one-device-one-license mechanism. One license key can only be used on one computer.
+- The software uses account and password login (a phone number and password are provided after purchase). One account can only be used on one computer.
 - Only one software instance is allowed on a single computer. Multiple concurrent instances are not supported.
 - The software is maintained by the author, and future versions will be published through GitHub Releases.
 
+## 🕒 Changelog
+
+| Version | Date | Notes |
+|---|---|---|
+| v2a2 (official v2 release) | 2026-08-24 | Collection switched to Playwright; several fixes for improved stability |
+| v1.1 | 2026-05-11 | Fixed ConnectionResetError (v1.0 is the initial release) |
+
+> For the full release history, see [Releases](https://github.com/mashukui/kuaishou_one_spider/releases)
+
 ## ❓ FAQ
+
+### Can I use the software after changing computers or reinstalling the system?
+
+Yes. Activation is bound to one computer per account. To switch devices, contact the WeChat official account `老男孩的平凡之路` and request unbinding; after that you can log in on the new computer.
+
+### Do I need to purchase again for software updates?
+
+No. During the license period, all future versions are freely available on [GitHub Releases](https://github.com/mashukui/kuaishou_one_spider/releases). Just download the latest version and reinstall.
 
 ### Do I need to install Python?
 
@@ -259,3 +282,9 @@ Users are solely responsible for risks and liabilities caused by improper use.
 - Reply in the WeChat official account: `快手`
 
 <img width="573" height="196" alt="二维码-公众号放底部v4" src="https://github.com/user-attachments/assets/0ee61a5c-4091-4d54-b824-273e111b1f75" />
+
+---
+
+<p align="center">
+More collection tools (Douyin / Xiaohongshu / Weibo / PGY / YouTube, 7 in total): <a href="https://mgnb.pro">马哥数据采集工坊 (mgnb.pro)</a>
+</p>
