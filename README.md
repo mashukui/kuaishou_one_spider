@@ -1,6 +1,10 @@
+<div align="center">
+
 # kuaishou_one_spider
 
 [![Release](https://img.shields.io/github/v/release/mashukui/kuaishou_one_spider?style=flat)](https://github.com/mashukui/kuaishou_one_spider/releases) [![最近更新](https://img.shields.io/github/release-date/mashukui/kuaishou_one_spider?style=flat)](https://github.com/mashukui/kuaishou_one_spider/releases) ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20%7C%20macOS-blue?style=flat)
+
+</div>
 
 > 🔥 快手数据采集工具 / Kuaishou crawler GUI，支持关键词作品采集、评论采集、作品详情采集、主页作品采集、视频下载、CSV 导出和链接转换。
 >
@@ -41,8 +45,8 @@
 
 1. 打开 [Releases](https://github.com/mashukui/kuaishou_one_spider/releases/) 下载最新版软件。
 2. 解压后运行对应系统的客户端。
-3. 使用软件内置的《cookie小工具》完成cookie配置。
-4. 登录软件账号。
+3. 使用软件内置的「Cookie 小工具」完成 Cookie 配置。
+4. 登录软件账号（还没账号？[日卡 19 元起，支付秒开通](#-价格说明)）。
 5. 选择采集模块，填写关键词、作品链接或主页链接。
 6. 点击「开始执行」，等待采集完成。
 7. 在软件所在目录查看CSV、视频文件和日志文件。
@@ -60,63 +64,63 @@
 
 关键词作品与评论采集界面：
 
-![运行界面-采集搜索作品及评论](https://files.mdnice.com/user/32110/13464ab4-bbab-4f23-8de0-c54a298496f0.jpg)
+![运行界面-采集搜索作品及评论](docs/images/readme/ks_01.jpg)
 
 搜索作品结果：
 
-![结果数据-搜索作品](https://files.mdnice.com/user/32110/47514426-3972-4d2b-8f44-06321074ca95.png)
+![结果数据-搜索作品](docs/images/readme/ks_02.png)
 
 评论采集结果：
 
-![结果数据-评论](https://files.mdnice.com/user/32110/3da2ce78-8520-4516-9d96-5762cd681a1b.png)
+![结果数据-评论](docs/images/readme/ks_03.png)
 
 ### 作品详情采集
 
 作品详情采集界面：
 
-![运行界面-采集作品详情](https://files.mdnice.com/user/32110/67a28f32-d288-43c2-9107-c01ebc53fbbb.jpg)
+![运行界面-采集作品详情](docs/images/readme/ks_04.jpg)
 
 作品详情采集结果：
 
-![结果数据-作品详情](https://files.mdnice.com/user/32110/7f6b8bc9-d409-4f25-aa60-ab62b74cf7df.png)
+![结果数据-作品详情](docs/images/readme/ks_05.png)
 
 自动下载的视频文件：
 
-![视频文件-作品详情](https://files.mdnice.com/user/32110/bbdd074e-7ffa-4d2a-94ab-2133544ee26b.png)
+![视频文件-作品详情](docs/images/readme/ks_06.png)
 
 ### 主页作品采集
 
 主页作品采集界面：
 
-![运行界面-采集主页作品](https://files.mdnice.com/user/32110/f604b457-bf2a-42ae-b412-9518c2cb5d39.jpg)
+![运行界面-采集主页作品](docs/images/readme/ks_07.jpg)
 
 主页作品采集结果：
 
-![结果数据-主页作品](https://files.mdnice.com/user/32110/1bd49107-b206-4de2-9164-c51c9557fce6.png)
+![结果数据-主页作品](docs/images/readme/ks_08.png)
 
 自动下载的主页视频文件：
 
-![视频文件-主页作品](https://files.mdnice.com/user/32110/815900e6-6fc0-4891-ac10-f0e5ec20b298.png)
+![视频文件-主页作品](docs/images/readme/ks_09.png)
 
 ### 链接与 uid 转换
 
 主页链接转快手号：
 
-![运行界面-主页链接转ks号](https://files.mdnice.com/user/32110/4649de6f-36e0-4140-bfaa-e800117e81f3.jpg)
+![运行界面-主页链接转ks号](docs/images/readme/ks_10.jpg)
 
-![结果数据-主页链接转ks号](https://files.mdnice.com/user/32110/1e9da0e4-1426-44ea-b377-308735ff2009.png)
+![结果数据-主页链接转ks号](docs/images/readme/ks_11.png)
 
 快手号转主页链接：
 
-![运行界面-ks号转主页链接](https://files.mdnice.com/user/32110/a2b7808a-3381-4ee6-82eb-5b6dc5bd1d2a.jpg)
+![运行界面-ks号转主页链接](docs/images/readme/ks_12.jpg)
 
-![结果数据-ks号转主页链接](https://files.mdnice.com/user/32110/7448e10e-a262-4386-9259-4ef0bd985110.png)
+![结果数据-ks号转主页链接](docs/images/readme/ks_13.png)
 
 App 端作品链接转 PC 端作品链接：
 
-![运行界面-app端作品链接转pc端作品链接](https://files.mdnice.com/user/32110/3ae828eb-9afc-4dd7-a107-a8b507b4b909.jpg)
+![运行界面-app端作品链接转pc端作品链接](docs/images/readme/ks_14.jpg)
 
-![结果数据-app端作品链接转pc端作品链接](https://files.mdnice.com/user/32110/f8b59751-21a1-4874-9535-1e1fe126fcfa.png)
+![结果数据-app端作品链接转pc端作品链接](docs/images/readme/ks_15.png)
 
 ## 📊 输出字段
 
@@ -184,12 +188,12 @@ App 端作品链接转 PC 端作品链接：
 | 模块 | 用途 |
 | --- | --- |
 | tkinter | GUI 软件界面 |
-| requests | 接口请求 |
+| playwright | 浏览器自动化采集（真实浏览器环境） |
 | json | 响应数据解析 |
 | pandas | CSV 数据保存 |
 | logging | 运行日志记录 |
 
-软件通过接口协议采集数据，不依赖模拟浏览器等 RPA 操作。采集过程中默认按页保存结果，每页请求间隔约 1-2 秒，便于控制采集节奏并降低异常中断造成的数据损失。
+软件基于 Playwright 驱动真实浏览器环境采集数据。采集过程中默认按页保存结果，每页间隔约 1-2 秒，便于控制采集节奏并降低异常中断造成的数据损失。
 
 ## 💰 价格说明
 
@@ -212,12 +216,20 @@ App 端作品链接转 PC 端作品链接：
 
 | 版本 | 发布日期 | 更新内容 |
 |---|---|---|
-| v2a2 | 2026-08-24 | 采集方案升级为 Playwright 技术；修复若干问题，提升采集稳定性 |
+| v2a2（v2 系列正式版） | 2026-08-24 | 采集方案升级为 Playwright 技术；修复若干问题，提升采集稳定性 |
 | v1.1 | 2026-05-11 | 修复 ConnectionResetError 报错（v1.0 为初始版本） |
 
 > 完整更新历史见 [Releases](https://github.com/mashukui/kuaishou_one_spider/releases)
 
 ## ❓ 常见问题
+
+### 换电脑或重装系统后还能用吗？
+
+可以。授权采用一机一码，一个账号绑定一台电脑；如需更换设备，请联系公众号「老男孩的平凡之路」后台申请解绑，处理后即可在新电脑登录使用。
+
+### 软件更新需要重新购买吗？
+
+不需要。授权有效期内，后续版本均通过 [GitHub Releases](https://github.com/mashukui/kuaishou_one_spider/releases) 免费更新，下载最新版覆盖安装即可。
 
 ### 是否需要安装 Python？
 
@@ -269,3 +281,10 @@ cookie 用于让软件以当前账号状态访问平台数据。请使用自己�
 - 公众号 `老男孩的平凡之路` 后台回复：`快手`
 
 <img width="573" height="196" alt="二维码-公众号放底部v4" src="https://github.com/user-attachments/assets/7508c875-4df8-4442-a532-a2a9d10b1833" />
+
+---
+
+<p align="center">
+更多采集工具（抖音 / 小红书 / 微博 / 蒲公英 / 油管等 7 款）：<a href="https://mgnb.pro">马哥数据采集工坊</a>
+</p>
+
