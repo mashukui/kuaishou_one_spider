@@ -225,7 +225,7 @@ Purchase page: [https://mgnb.pro/product/kuaishou](https://mgnb.pro/product/kuai
 
 ### Can I use the software after changing computers or reinstalling the system?
 
-Yes. Activation is bound to one computer per account. To switch devices, contact the WeChat official account `老男孩的平凡之路` and request unbinding; after that you can log in on the new computer.
+Yes. Activation is bound to one computer per account. To switch devices, contact the [WeChat official account 老男孩的平凡之路](https://github.com/mashukui/mashukui/blob/main/wechat2.png) and request unbinding; after that you can log in on the new computer.
 
 ### Do I need to purchase again for software updates?
 
