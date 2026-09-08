@@ -1,5 +1,7 @@
 # kuaishou_one_spider
 
+[![Release](https://img.shields.io/github/v/release/mashukui/kuaishou_one_spider?style=flat)](https://github.com/mashukui/kuaishou_one_spider/releases) [![最近更新](https://img.shields.io/github/release-date/mashukui/kuaishou_one_spider?style=flat)](https://github.com/mashukui/kuaishou_one_spider/releases) ![平台](https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20%7C%20macOS-blue?style=flat)
+
 > 🔥 快手数据采集工具 / Kuaishou crawler GUI，支持关键词作品采集、评论采集、作品详情采集、主页作品采集、视频下载、CSV 导出和链接转换。
 >
 > 💡 支持 Windows/macOS，无需配置Python环境；仓库用于软件介绍、版本发布、使用说明和问题反馈，完整源码暂不公开。
@@ -205,6 +207,15 @@ App 端作品链接转 PC 端作品链接：
 - 软件采用账号密码登录（购买后获得手机号和密码），一机一码，一个账号仅支持一台电脑使用。
 - 一台电脑仅允许运行一个软件实例，不支持多开。
 - 软件由作者长期维护，后续版本通过 GitHub Releases 发布。
+
+## 🕒 更新日志
+
+| 版本 | 发布日期 | 更新内容 |
+|---|---|---|
+| v2a2 | 2026-08-24 | 采集方案升级为 Playwright 技术；修复若干问题，提升采集稳定性 |
+| v1.1 | 2026-05-11 | 修复 ConnectionResetError 报错（v1.0 为初始版本） |
+
+> 完整更新历史见 [Releases](https://github.com/mashukui/kuaishou_one_spider/releases)
 
 ## ❓ 常见问题
 
