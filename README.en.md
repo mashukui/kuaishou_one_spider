@@ -216,6 +216,7 @@ Purchase page: [https://mgnb.pro/product/kuaishou](https://mgnb.pro/product/kuai
 
 | Version | Date | Notes |
 |---|---|---|
+| v2.3 | 2026-11-07 | Fixed looping collection of second-level comments; corrected the video duration unit; added search retry for better stability |
 | v2a2 (official v2 release) | 2026-08-24 | Collection switched to Playwright; several fixes for improved stability |
 | v1.1 | 2026-05-11 | Fixed ConnectionResetError (v1.0 is the initial release) |
 
