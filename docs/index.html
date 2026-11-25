@@ -508,6 +508,16 @@ var _hmt = _hmt || [];
 .hero h1 { font-size: clamp(34px, 4.4vw, 58px); line-height: 1.12; letter-spacing: -.045em; max-width: 620px; }
 .hero-copy { max-width: 560px; }
 .feature-main strong { display: inline-block; margin-top: 22px; padding: 7px 12px; border-radius: 999px; background: #fff; border: 1px solid rgba(172,24,34,.18); font-size: 13px; line-height: 1.2; letter-spacing: .04em; color: var(--accent-dark); }
+
+.showcase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.showcase-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); text-decoration: none; color: inherit; }
+.showcase-card:hover { border-color: var(--line-strong); }
+.showcase-card.wide { grid-column: span 2; }
+.showcase-card img { display: block; width: 100%; height: auto; }
+.showcase-card:not(.wide) img { aspect-ratio: 16 / 9; object-fit: cover; object-position: top; }
+.showcase-card .cap { display: block; padding: 12px 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.showcase-card .cap strong { display: block; margin-bottom: 2px; color: var(--ink); font-size: 14px; }
+@media (max-width: 760px) { .showcase-grid { grid-template-columns: 1fr; } .showcase-card.wide { grid-column: auto; } }
 </style>
 </head>
 <body>
@@ -600,6 +610,16 @@ var _hmt = _hmt || [];
     <div class="result-preview">
       <div class="result-preview-header"><h3>采集结果展示</h3><p>真实结果表字段较宽，手机端可左右滑动查看。</p></div>
       <div class="result-stack"><figure class="result-shot"><div class="result-image-scroll" tabindex="0" role="region" aria-label="快手评论采集结果，可横向滚动"><img src="images/result.jpg" width="1200" height="599" loading="lazy" decoding="async" alt="快手评论采集结果，包含评论者、内容、时间、点赞和 IP 属地"></div><figcaption>真实导出结果：评论内容、评论者、时间、互动和作品来源字段</figcaption></figure></div>
+    </div>
+  </section>
+  <section class="section-shell" id="showcase">
+    <div class="section-heading"><h2>界面与结果展示</h2><p>主要模块的界面和导出结果，点击图片可以查看大图。</p></div>
+    <div class="showcase-grid">
+      <a class="showcase-card wide" href="images/detail.jpg" target="_blank" rel="noopener"><img src="images/detail.jpg" width="1200" height="625" loading="lazy" decoding="async" alt="快手作品详情采集结果"><span class="cap"><strong>作品详情采集</strong><span>互动数据、发布时间、封面和视频直链等字段</span></span></a>
+      <a class="showcase-card" href="images/input.jpg" target="_blank" rel="noopener"><img src="images/input.jpg" width="1200" height="593" loading="lazy" decoding="async" alt="快手关键词搜索作品结果"><span class="cap"><strong>搜索作品结果</strong><span>关键词作品数据 CSV</span></span></a>
+      <a class="showcase-card" href="images/result.jpg" target="_blank" rel="noopener"><img src="images/result.jpg" width="1200" height="599" loading="lazy" decoding="async" alt="快手评论采集结果"><span class="cap"><strong>评论采集结果</strong><span>评论内容和用户信息</span></span></a>
+      <a class="showcase-card" href="images/profile.jpg" target="_blank" rel="noopener"><img src="images/profile.jpg" width="1200" height="564" loading="lazy" decoding="async" alt="快手主页作品采集结果"><span class="cap"><strong>主页作品采集</strong><span>公开主页作品列表</span></span></a>
+      <a class="showcase-card" href="images/download.jpg" target="_blank" rel="noopener"><img src="images/download.jpg" width="1200" height="738" loading="lazy" decoding="async" alt="快手视频下载文件"><span class="cap"><strong>视频下载</strong><span>按任务保存无水印视频文件</span></span></a>
     </div>
   </section>
   <section class="section-shell compact" id="demo">
